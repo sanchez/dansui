@@ -1,0 +1,67 @@
+@inject IToastService ToastService
+@implements IDisposable
+@using System.Reactive.Linq
+@using Sanchez.DansUI.Models
+
+@if (_currentToast != null)
+{
+    <div class="container">
+    @foreach (var toast in _currentToast)
+        {
+            <div class="toast @SeverityClass(toast.ToastSeverity)">
+                <Sanchez.DansUI.Components.App.AppContent>
+                    <div class="close" @onclick=@toast.OnClosed>
+                        <Sanchez.DansUI.Components.Component.Icon Type="Icons.IconType.X" />
+                    </div>
+                    <div class="title">@toast.Title</div>
+                    @if (toast.Message != null)
+                    {
+                        <div class="message">@toast.Message</div>
+                    }
+                </Sanchez.DansUI.Components.App.AppContent>
+                @if (toast.Actions != null)
+                {
+                    <div class="actions">
+                        @toast.Actions
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private IDisposable toastSubscription;
+    private ICollection<ToastFrame> _currentToast;
+
+    protected string SeverityClass(ToastSeverity severity)
+    {
+        return severity switch
+        {
+            ToastSeverity.UNKNOWN => "unknown",
+            ToastSeverity.SUCCESS => "success",
+            ToastSeverity.WARNING => "warning",
+            ToastSeverity.ERROR => "error",
+            _ => throw new NotSupportedException("Invalid Severity Type on Toast")
+        };
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        toastSubscription = ToastService.DisplayStack()
+        .Do(x =>
+        {
+            _currentToast = x?.ToList();
+            StateHasChanged();
+        })
+        .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        if (toastSubscription != null)
+            toastSubscription.Dispose();
+    }
+}

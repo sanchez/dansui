@@ -1,0 +1,173 @@
+@page "/display/table"
+
+@using DynamicData
+@using DynamicData.Binding
+@using Sanchez.DansUI.Controllers
+@using Sanchez.DansUI.Runner.Blazor.Models
+@using System.Collections.ObjectModel
+@using System.Reactive.Linq
+@using Sanchez.DansUI.Icons
+
+@implements IDisposable
+
+<h1>Basic Table</h1>
+<h2>Slimmed Table</h2>
+
+<Slimmer>
+    <Card>
+        <h3>Registered People</h3>
+        <Table Items="people" Context="person">
+            <Header>
+                <TableHeader>Id</TableHeader>
+                <TableHeader>
+                    <ChildContent>FirstName</ChildContent>
+                    <SortContent>
+                        <TableHeaderSorter SortController=@sortController Name="FirstName" />
+                    </SortContent>
+                </TableHeader>
+                <TableHeader>LastName</TableHeader>
+                <TableHeader>
+                    <ChildContent>Age</ChildContent>
+                    <SortContent>
+                        <TableHeaderSorter SortController=@sortController Name="Age" />
+                    </SortContent>
+                </TableHeader>
+                <TableHeader>
+                    <ChildContent>PostCode</ChildContent>
+                    <SortContent>
+                        <TableHeaderSorter SortController=@sortController Name="PostCode" />
+                    </SortContent>
+                </TableHeader>
+            </Header>
+            <RowTemplate>
+                <TableCell>@person.Id</TableCell>
+                <TableCell>
+                    <Prefix>
+                        <Icon Type="IconType.AXE" />
+                    </Prefix>
+                    <ChildContent>
+                        @person.FirstName
+                    </ChildContent>
+                    <Suffix>
+                        <Icon Type="IconType.EDIT" />
+                    </Suffix>
+                </TableCell>
+                <TableCell>@person.LastName</TableCell>
+                <TableCell CenterAlign="@true">@person.Age</TableCell>
+                <TableCell RightAlign="@true">@person.PostCode</TableCell>
+            </RowTemplate>
+        </Table>
+        <TablePager PageController="@pageController" />
+    </Card>
+</Slimmer>
+
+<h2>Full Table</h2>
+
+<Card>
+    <h3>Registered People</h3>
+    <Table Items="people" Context="person" ShouldOverflow="@false">
+        <Header>
+            <TableHeader>Id</TableHeader>
+            <TableHeader>
+                <ChildContent>FirstName</ChildContent>
+                <SortContent>
+                    <TableHeaderSorter SortController=@sortController Name="FirstName" />
+                </SortContent>
+            </TableHeader>
+            <TableHeader>LastName</TableHeader>
+            <TableHeader>
+                <ChildContent>Age</ChildContent>
+                <SortContent>
+                    <TableHeaderSorter SortController=@sortController Name="Age" />
+                </SortContent>
+            </TableHeader>
+            <TableHeader>
+                <ChildContent>PostCode</ChildContent>
+                <SortContent>
+                    <TableHeaderSorter SortController=@sortController Name="PostCode" />
+                </SortContent>
+            </TableHeader>
+        </Header>
+        <RowTemplate>
+            <TableCell>@person.Id</TableCell>
+            <TableCell>
+                <Prefix>
+                    <Icon Type="IconType.AXE" />
+                </Prefix>
+                <ChildContent>
+                    @person.FirstName
+                </ChildContent>
+                <Suffix>
+                    <Icon Type="IconType.EDIT" />
+                </Suffix>
+            </TableCell>
+            <TableCell>@person.LastName</TableCell>
+            <TableCell CenterAlign="@true">@person.Age</TableCell>
+            <TableCell RightAlign="@true">@person.PostCode</TableCell>
+        </RowTemplate>
+    </Table>
+    <TablePager PageController="@pageController" />
+</Card>
+
+<h2>Table without Card</h2>
+
+<Slimmer>
+    <Table Items="people" Context="person">
+        <Header>
+            <TableHeader>
+                <ChildContent>FirstName</ChildContent>
+                <SortContent>
+                    <TableHeaderSorter SortController=@sortController Name="FirstName" />
+                </SortContent>
+            </TableHeader>
+            <TableHeader>LastName</TableHeader>
+        </Header>
+        <RowTemplate>
+            <TableCell>
+                <Prefix>
+                    <Icon Type="IconType.AXE" />
+                </Prefix>
+                <ChildContent>
+                    @person.FirstName
+                </ChildContent>
+                <Suffix>
+                    <Icon Type="IconType.EDIT" />
+                </Suffix>
+            </TableCell>
+            <TableCell>@person.LastName</TableCell>
+        </RowTemplate>
+    </Table>
+    <TablePager PageController="@pageController" />
+</Slimmer>
+
+@code {
+    protected IDisposable peopleLoader;
+    protected ReadOnlyObservableCollection<RegisteredPerson> people;
+
+    protected SortController<RegisteredPerson> sortController = new("id", false,
+    SortExpressionComparer<RegisteredPerson>.Ascending(x =>
+    x.Id));
+
+    protected PageController pageController = new(5);
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        peopleLoader = RegisteredPerson.GeneratePeople(100)
+        .Connect()
+        //.ObserveOnDispatcher()
+        .BindSortController(sortController)
+        .BindPageController(pageController)
+        .Bind(out people)
+        .DisposeMany()
+        .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        sortController.Dispose();
+        if (peopleLoader != null)
+            peopleLoader.Dispose();
+    }
+}

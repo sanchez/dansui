@@ -1,0 +1,51 @@
+@using Sanchez.DansUI.Icons
+@using Sanchez.DansUI.Components.Component
+
+<div class="container">
+    <div class="steps">
+        @foreach (var (i, step) in Steps.Select((x, i) => (i, x)))
+        {
+            @if (i != 0)
+            {
+                <div class="spacer"></div>
+            }
+            <div class=@GetClass(step) @onclick="() => HandleChangeStep(step)">
+            <div class="step-icon">
+                @if (step.Icon != IconType.UNKNOWN)
+                    {
+                        <Icon Type="@step.Icon" />
+                    }
+                </div>
+                <div class="step-title">
+                    @step.Title
+                </div>
+                <div class="step-sub-title">
+                    @step.SubTitle
+                </div>
+            </div>
+        }
+    </div>
+    <div class="active-step">@ActiveStep?.Render()</div>
+</div>
+
+@code {
+    private string GetClass(IStepItem step)
+    {
+        if (step == ActiveStep) return "step active";
+        return "step";
+    }
+
+    private Task HandleChangeStep(IStepItem step)
+    {
+        return ActiveStepChanged.InvokeAsync(step);
+    }
+
+    [Parameter]
+    public ICollection<IStepItem> Steps { get; set; }
+
+    [Parameter]
+    public IStepItem ActiveStep { get; set; }
+
+    [Parameter]
+    public EventCallback<IStepItem> ActiveStepChanged { get; set; }
+}

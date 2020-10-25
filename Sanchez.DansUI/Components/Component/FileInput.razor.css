@@ -1,0 +1,63 @@
+label {
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    font-size: 0.8em;
+
+    cursor: pointer;
+}
+
+label > span.fieldContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 7px;
+    margin-top: 4px;
+    background-color: var(--field-primary-background);
+    border: 1px solid var(--field-primary-outline);
+    color: var(--field-primary-fixcolor);
+    padding: 4px 12px;
+    min-height: 28px;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+label:focus-within > span.fieldContainer {
+    border-color: var(--field-primary-enabled);
+}
+
+label div {
+    background-color: inherit;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    color: var(--field-primary-color);
+}
+
+::deep label > input {
+    display: none;
+}
+
+span.fieldContainer > div {
+    flex: 1 0;
+    flex-basis: 50px;
+}
+
+span.fieldContainer > span {
+    flex: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-content: stretch;
+    justify-items: stretch;
+    align-items: stretch;
+}

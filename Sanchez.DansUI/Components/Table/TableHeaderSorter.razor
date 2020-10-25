@@ -1,0 +1,88 @@
+@using DynamicData.Binding
+@using Sanchez.DansUI.Icons
+@using Sanchez.DansUI.Controllers
+@using System.Reactive.Linq
+@using System.Linq.Expressions
+@using System.Reflection
+
+@implements IDisposable
+
+@typeparam TItem
+
+<Sanchez.DansUI.Components.Component.Icon Type="@SortIcon" @onclick=HandleClick />
+
+@code {
+    private string componentId = Guid.NewGuid().ToString();
+    private IDisposable _clickListener;
+    private IDisposable _sortListener;
+
+    protected override void OnParametersSet()
+    {
+        if (_clickListener != null) _clickListener.Dispose();
+        if (_sortListener != null) _sortListener.Dispose();
+
+        _sortListener = SortController
+        .Do(x => StateHasChanged())
+        .Subscribe();
+
+        if (ClickHandler != null)
+            _clickListener = ClickHandler
+            .Do(x => HandleClick())
+            .Subscribe();
+    }
+
+    protected IconType SortIcon
+    {
+        get
+        {
+            var lastValue = SortController.LastValue;
+            if (lastValue.PropertyName != Name) return IconType.CHEVRONS_UP_DOWN;
+            if (lastValue.WasDescending) return IconType.CHEVRON_UP;
+            return IconType.CHEVRON_DOWN;
+        }
+    }
+
+    protected Func<TItem, IComparable> GenerateSelector()
+    {
+        var propInfo = typeof(TItem).GetProperty(Name);
+        return (item) => propInfo.GetValue(item) as IComparable;
+    }
+
+    protected void HandleClick()
+    {
+        var lastValue = SortController.LastValue;
+        if (lastValue.PropertyName == Name && !lastValue.WasDescending)
+        {
+            SortController.Emit(new SortAction<TItem>()
+            {
+                Comparer = SortExpressionComparer<TItem>.Descending(GenerateSelector()),
+                PropertyName = Name,
+                WasDescending = true
+            });
+        }
+        else
+        {
+            SortController.Emit(new SortAction<TItem>()
+            {
+                Comparer = SortExpressionComparer<TItem>.Ascending(GenerateSelector()),
+                PropertyName = Name,
+                WasDescending = false
+            });
+        }
+    }
+
+    [Parameter]
+    public SortController<TItem> SortController { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+    [CascadingParameter(Name = "ClickHandler")]
+    public IObservable<object> ClickHandler { get; set; }
+
+    public void Dispose()
+    {
+        if (_clickListener != null) _clickListener.Dispose();
+        if (_sortListener != null) _sortListener.Dispose();
+    }
+}

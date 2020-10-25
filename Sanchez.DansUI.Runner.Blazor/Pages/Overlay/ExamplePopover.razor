@@ -1,0 +1,26 @@
+@using Sanchez.DansUI.Runner.Blazor.Models
+
+@implements IPopper<UserDetailsModel>
+
+<div style="background-color: black; color: white; padding: 15px; position: fixed; top: 50px; left: 50px">
+    <h2>Hello There</h2>
+    <p>I am a free bird just flying around!</p>
+    <Button @onclick=HandleNext>Let's go</Button>
+</div>
+
+@code {
+    protected void HandleNext()
+    {
+        OnCompleted(new UserDetailsModel()
+        {
+            FirstName = "Hello",
+            LastName = "World"
+        });
+    }
+
+    [Parameter]
+    public Action OnExit { get; set; }
+
+    [Parameter]
+    public Action<UserDetailsModel> OnCompleted { get; set; }
+}

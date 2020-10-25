@@ -1,0 +1,28 @@
+﻿div.container {
+    padding-top: 50px;
+    padding-bottom: 12px;
+}
+
+div.container.collapsed {
+    grid-template-columns: 25px 0% 0%;
+    column-gap: 0px;
+}
+
+div.icon {
+}
+
+div.name {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+div.collapsed > .name {
+    display: none;
+}
+
+div.action {
+}
+
+div.collapsed > .action {
+    display: none;
+}

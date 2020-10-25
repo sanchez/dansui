@@ -1,0 +1,34 @@
+<div class="@CssClass">
+    <div class="banner">
+        <Icon class="icon" />
+        <div class="content">@ChildContent</div>
+    </div>
+</div>
+
+@code {
+    protected Icons.IconType Icon => Severity switch
+    {
+        NotificationSeverity.UNKNOWN => Icons.IconType.BELL,
+        NotificationSeverity.SUCCESS => Icons.IconType.CHECK,
+        NotificationSeverity.WARNING => Icons.IconType.ALERT_TRIANGLE,
+        NotificationSeverity.ERROR => Icons.IconType.ALERT_TRIANGLE,
+        _ => throw new NotSupportedException("Invalid Severity Type On Notification")
+    };
+
+    protected string SeverityClass => Severity switch
+    {
+        NotificationSeverity.UNKNOWN => "unkown",
+        NotificationSeverity.SUCCESS => "success",
+        NotificationSeverity.WARNING => "warning",
+        NotificationSeverity.ERROR => "error",
+        _ => throw new NotSupportedException("Invalid Severity Type on Notification")
+    };
+
+    protected string CssClass => $"container {SeverityClass}";
+
+    [Parameter]
+    public NotificationSeverity Severity { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

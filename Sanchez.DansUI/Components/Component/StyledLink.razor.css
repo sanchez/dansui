@@ -1,0 +1,9 @@
+﻿a {
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a.active {
+    text-decoration: underline;
+    font-weight: bold;
+}

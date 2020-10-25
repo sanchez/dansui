@@ -1,0 +1,39 @@
+﻿<div class="container">
+    <div class=@_innerContainerClass>
+        <CascadingValue Name="SidebarIsOpen" Value="@isOpen">
+            <CascadingValue Name="ComponentContext" Value="@componentContext">
+                @ChildContent
+            </CascadingValue>
+        </CascadingValue>
+    </div>
+</div>
+
+@code {
+    private DefaultState<bool> isOpen = new(true);
+    private DefaultState<ComponentContext> componentContext = new(ComponentContext.NAVBAR);
+
+    private string _innerContainerClass => IsOpen ? "innerContainer" : "innerContainer collapsed";
+
+    protected override void OnInitialized()
+    {
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_lastIsOpen != IsOpen)
+        {
+            _lastIsOpen = IsOpen;
+            isOpen.Value = IsOpen;
+        }
+    }
+
+    protected bool _lastIsOpen = true;
+
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

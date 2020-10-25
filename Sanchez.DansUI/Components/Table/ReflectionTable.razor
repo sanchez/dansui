@@ -1,0 +1,146 @@
+@using DynamicData
+@using DynamicData.Binding
+@using Sanchez.DansUI.Attributes
+@using Sanchez.DansUI.Controllers
+@using Sanchez.DansUI.Icons
+@using System.Collections.ObjectModel
+@using System.Reactive.Linq
+
+@implements IDisposable
+
+@typeparam TItem
+@typeparam TItemKey
+
+<div>
+    <Table Items="@resData" Context="item">
+        <Header>
+            @foreach (var header in LoadHeaders())
+            {
+                @if (header.IsVisible == false) continue;
+
+                <TableHeader ShowSortContent="@(header.SortSelector != null)">
+                    <ChildContent>
+                        @header.Name
+                    </ChildContent>
+                    <SortContent>
+                        <TableHeaderSorter SortController=@sortController Name=@header.SortSelector />
+                    </SortContent>
+                </TableHeader>
+            }
+        </Header>
+        <RowTemplate>
+            @foreach (var header in LoadHeaders())
+            {
+                @if (header.IsVisible == false) continue;
+
+                <TableCell ShowPrefix="@(header.CellPrefix != null)" ShowSuffix="@(header.CellSuffix != null)">
+                    <Prefix>
+                        @header.RenderedCellPrefix
+                    </Prefix>
+                    <ChildContent>
+                        @header.Selector(item)
+                    </ChildContent>
+                    <Suffix>
+                        @header.RenderedCellSuffix
+                    </Suffix>
+                </TableCell>
+            }
+        </RowTemplate>
+    </Table>
+    <TablePager PageController=@pageController />
+</div>
+
+@code {
+    protected IDisposable dataLoader;
+    protected ReadOnlyObservableCollection<TItem> resData;
+
+    protected SortController<TItem> sortController = null;
+
+    protected PageController pageController = new(10);
+
+    protected ICollection<ReflectionTableHeader<TItem>> LoadHeaders()
+    {
+        var t = typeof(TItem);
+        var properties = t.GetProperties();
+
+        return properties.Select(x =>
+        {
+            var tableHeader = new ReflectionTableHeader<TItem>()
+            {
+                Name = x.Name,
+                IsVisible = true,
+                Selector = row => x.GetValue(row)
+            };
+
+            var prefixAttribute = Attribute.GetCustomAttribute(x, typeof(TableCellPrefixAttribute));
+            var suffixAttribute = Attribute.GetCustomAttribute(x, typeof(TableCellSuffixAttribute));
+            var displayNameAttribute = Attribute.GetCustomAttribute(x, typeof(TableHeaderDisplayNameAttribute));
+
+            var customAttributes = Attribute.GetCustomAttributes(x);
+            foreach (var attr in customAttributes)
+            {
+                if (attr is TableCellPrefixAttribute prefixAttr)
+                    tableHeader.CellPrefix = prefixAttr.Prefix;
+                if (attr is TableCellSuffixAttribute suffixAttr)
+                    tableHeader.CellSuffix = suffixAttr.Suffix;
+                if (attr is TableHeaderDisplayNameAttribute displayNameAttr)
+                    tableHeader.Name = displayNameAttr.Name;
+                if (attr is TableHeaderVisibleAttribute visibleAttr)
+                    tableHeader.IsVisible = visibleAttr.IsVisible;
+                if (attr is TableSortable sortableAttr)
+                    if (sortableAttr.Selector == null)
+                        tableHeader.SortSelector = x.Name;
+                    else
+                        tableHeader.SortSelector = sortableAttr.Selector;
+            }
+
+            return tableHeader;
+        }).ToList();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var headers = LoadHeaders();
+        var firstHeader = headers.First();
+
+        var firstHeaderProp = typeof(TItem).GetProperty(firstHeader.SortSelector);
+        Func<TItem, IComparable> sorter = item => firstHeaderProp.GetValue(item) as IComparable;
+
+        sortController = new(firstHeader.Name, false, SortExpressionComparer<TItem>.Ascending(sorter));
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (resData != null) dataLoader.Dispose();
+
+        dataLoader = Data.Connect()
+        .BindSortController(sortController)
+        .BindPageController(pageController)
+        .Bind(out resData)
+        .DisposeMany()
+        .Subscribe();
+    }
+
+    [Parameter]
+    public bool ShouldOverflow { get; set; } = false;
+
+    [Parameter]
+    public bool ShowBorders { get; set; } = true;
+
+    [Parameter]
+    public bool AlternateRowColors { get; set; } = true;
+
+    [Parameter]
+    public ISourceCache<TItem, TItemKey> Data { get; set; }
+
+    public void Dispose()
+    {
+        sortController.Dispose();
+        if (dataLoader != null)
+            dataLoader.Dispose();
+    }
+}

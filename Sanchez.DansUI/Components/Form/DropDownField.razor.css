@@ -1,0 +1,23 @@
+.container {
+    position: relative;
+}
+
+.dropdownContent {
+    display: none;
+}
+
+.dropdownContent.show {
+    display: block;
+    position: absolute;
+
+    left: 0px;
+    padding-top: 7px;
+}
+
+.innerDropContent {
+    padding: 12px;
+    border-radius: 5px;
+
+    border: 1px solid var(--dropdown-outline);
+    background-color: var(--dropdown-background);
+}

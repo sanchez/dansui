@@ -1,0 +1,52 @@
+.container {
+    position: fixed;
+    top: 60px;
+    right: 0px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 12px;
+
+    max-width: 280px;
+    width: 100%;
+}
+
+.toast {
+    position: relative;
+
+    background-color: white;
+    color: white;
+
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    border-left: 5px solid var(--notification-base-border-color);
+    box-shadow: 0px 0px 10px -3px black;
+}
+
+.toast.unknown { border-color: var(--notification-base-border-color); }
+.toast.success { border-color: var(--notification-success-border-color); }
+.toast.warning { border-color: var(--notification-warning-border-color); }
+.toast.error { border-color: var(--notification-error-border-color); }
+
+.toast .close {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+}
+
+.toast .title {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.toast .title + .message {
+    padding-top: 12px;
+}
+
+.toast .actions {
+    padding: 5px;
+    background-color: var(--modal-footer-background-color);
+}

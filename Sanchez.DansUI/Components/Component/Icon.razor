@@ -1,0 +1,13 @@
+﻿@using Sanchez.DansUI.Icons
+
+<div @attributes=@AdditionalAttributes>
+    @Type.ToRenderFragment()
+</div>
+
+@code {
+    [Parameter]
+    public IconType Type { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+}

@@ -1,0 +1,31 @@
+﻿<div class="container">
+    @if (TitlePicture != null)
+    {
+        <div class="picture">
+            @TitlePicture
+        </div>
+    }
+    @if (ChildContent != null)
+    {
+        <div class="content">
+            @ChildContent
+        </div>
+    }
+    @if (FooterContent != null)
+    {
+        <div class="footer">
+            @FooterContent
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment TitlePicture { get; set; }
+
+    [Parameter]
+    public RenderFragment FooterContent { get; set; }
+}

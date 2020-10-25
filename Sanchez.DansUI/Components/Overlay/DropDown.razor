@@ -1,0 +1,47 @@
+﻿@if (TriggerContent != null)
+{
+	@TriggerContent(HandleShowDropDown)
+} 
+else
+{
+	<Sanchez.DansUI.Components.Component.Button @onclick=@HandleShowDropDown>
+		<ChildContent>@Title</ChildContent>
+		<Suffix>
+			<Sanchez.DansUI.Components.Component.Icon Type="Icons.IconType.CHEVRON_DOWN" />
+		</Suffix>
+	</Sanchez.DansUI.Components.Component.Button>
+}
+
+<DropOver @bind-Show=@showContent>
+	<div class="drop-content">
+		@ChildContent(HandleUpdateDropDown)
+	</div>
+</DropOver>
+
+@code {
+	bool showContent;
+
+	void HandleShowDropDown()
+	{
+		showContent = true;
+		StateHasChanged();
+	}
+
+	void HandleUpdateDropDown(bool newValue)
+	{
+		if(showContent != newValue)
+		{
+			showContent = newValue;
+			StateHasChanged();
+		}
+	}
+
+	[Parameter]
+	public RenderFragment<Action<bool>> ChildContent{ get; set; }
+
+	[Parameter]
+	public string Title { get; set; } = "DropDown";
+
+	[Parameter]
+	public RenderFragment<Action> TriggerContent{ get; set; }
+}

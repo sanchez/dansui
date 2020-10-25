@@ -1,0 +1,74 @@
+﻿<button class="@buttonClass" @attributes="@AdditionalAttributes" @onmousedown="@OnButtonDown" @onmouseup="@OnButtonUp" @onkeydown="@OnButtonDown" @onkeyup="@OnButtonUp">
+    @if (Prefix != null)
+    {
+        <div>
+            @Prefix
+        </div>
+    }
+
+    <div>
+        @ChildContent
+    </div>
+
+    @if (Suffix != null)
+    {
+        <div>
+            @Suffix
+        </div>
+    }
+</button>
+
+@code {
+    private bool IsActive = false;
+
+    private string buttonClass
+    {
+        get
+        {
+            var classes = new List<string>(10);
+            if (IsPrimary) classes.Add("primary");
+            else if (IsSecondary) classes.Add("secondary");
+            else classes.Add("base");
+
+            if (IsActive) classes.Add("active");
+
+            return string.Join(' ', classes);
+        }
+    }
+
+    private void OnButtonDown()
+    {
+        if (!IsActive)
+        {
+            IsActive = true;
+            StateHasChanged();
+        }
+    }
+
+    private void OnButtonUp()
+    {
+        if (IsActive)
+        {
+            IsActive = false;
+            StateHasChanged();
+        }
+    }
+
+    [Parameter]
+    public bool IsPrimary { get; set; }
+
+    [Parameter]
+    public bool IsSecondary { get; set; }
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+}

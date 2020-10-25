@@ -1,0 +1,40 @@
+<div class="container">
+    <span class="fieldContainer">
+        @if (Prefix != null)
+        {
+            <span>@Prefix</span>
+        }
+
+        <input type="text" @attributes=@AdditionalAttributes value=@Value @onchange=@HandleChange />
+
+        @if (Suffix != null)
+        {
+            <span>@Suffix</span>
+        }
+    </span>
+</div>
+
+@code {
+    protected Task HandleChange(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+            if (e.Value is string s)
+                return ValueChanged.InvokeAsync(s);
+        return Task.CompletedTask;
+    }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+}

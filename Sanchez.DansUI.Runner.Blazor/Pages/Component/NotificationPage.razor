@@ -1,0 +1,25 @@
+@page "/component/notification"
+@using Sanchez.DansUI.Enum
+
+<h1>Notification</h1>
+
+<h2>Basic Notification</h2>
+<Notification>
+    Hello World!
+</Notification>
+
+<Notification Severity=@NotificationSeverity.UNKNOWN>
+    Unknown Severity!
+</Notification>
+
+<Notification Severity=@NotificationSeverity.SUCCESS>
+    Success Severity!
+</Notification>
+
+<Notification Severity=@NotificationSeverity.WARNING>
+    Warning Severity!
+</Notification>
+
+<Notification Severity=@NotificationSeverity.ERROR>
+    Error Severity!
+</Notification>

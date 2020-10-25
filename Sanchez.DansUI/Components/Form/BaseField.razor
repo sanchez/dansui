@@ -1,0 +1,67 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@typeparam TValue
+@inherits InputBase<TValue>
+
+<div class="container">
+    <label class="@CssClass">
+        @if (Label != null)
+        {
+            <span>@Label</span>
+        }
+
+        <span class="fieldContainer">
+            @if (Prefix != null)
+            {
+                <span>@Prefix</span>
+            }
+
+            <input type="text" @attributes="@AdditionalAttributes" value="@CurrentValue" @oninput="HandleChange" />
+
+            @if (Suffix != null)
+            {
+                <span>@Suffix</span>
+            }
+        </span>
+    </label>
+
+    @foreach (var message in EditContext.GetValidationMessages(FieldIdentifier))
+    {
+        <div class="validation-error">@message</div>
+    }
+</div>
+
+@code {
+
+    protected void HandleChange(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+            if (e.Value is string s)
+                CurrentValueAsString = s;
+    }
+
+    protected override bool TryParseValueFromString(string value, [MaybeNullWhen(false)] out TValue result,
+    [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        if (BindConverter.TryConvertTo<TValue>(value, CultureInfo.InvariantCulture, out result))
+        {
+            validationErrorMessage = null;
+            return true;
+        }
+        else
+        {
+            validationErrorMessage = $"Unable to parse field: {FieldIdentifier.FieldName}";
+            return false;
+        }
+    }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; }
+}

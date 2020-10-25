@@ -1,0 +1,21 @@
+﻿@page "/component/button"
+
+<h1>Button</h1>
+
+A normal button: <Button>Normal</Button>
+<br />
+With prefix and suffix button:
+<Button>
+    <Prefix>
+        <Icon Type="Icons.IconType.ALARM_CHECK" />
+    </Prefix>
+    <ChildContent>Inner</ChildContent>
+    <Suffix>
+        <Icon Type="Icons.IconType.AIRPLAY" />
+    </Suffix>
+</Button>
+<br />
+Primary Button: <Button IsPrimary="@true">Primary</Button>
+<br />
+Secondary Button: <Button IsSecondary="@true">Secondary</Button>
+<br />

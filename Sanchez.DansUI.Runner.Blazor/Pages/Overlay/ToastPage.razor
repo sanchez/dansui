@@ -1,0 +1,82 @@
+@page "/overlay/toast"
+
+@using System.Reactive.Linq
+@using System.Reactive
+
+@inject IToastService ToastService
+
+@implements IDisposable
+
+<h1>Toast Notification</h1>
+
+<div>
+
+    <Button @onclick=HandleToastNotification>
+        <ChildContent>Chained Notification</ChildContent>
+        <Suffix>
+            <Icon Type="IconType.BELL" />
+        </Suffix>
+    </Button>
+
+    <Button @onclick=HandleToastAllNotifications>
+        <ChildContent>All Notifications</ChildContent>
+        <Suffix>
+            <Icon Type="IconType.BELL" />
+        </Suffix>
+    </Button>
+
+</div>
+
+@code {
+    IDisposable previousToastNotification;
+    void HandleToastNotification()
+    {
+        if (previousToastNotification != null)
+            previousToastNotification.Dispose();
+
+        previousToastNotification =
+        ToastService.Push<bool>(ToastSeverity.SUCCESS, "Hello World", "This is a starting message", x =>
+    @<Button @onclick="() => x(true)">Yeah Ok</Button>
+    )
+.SelectMany(res =>
+{
+    if (res)
+    {
+    return ToastService.Push<bool>(ToastSeverity.WARNING, "Are you sure?", "Are you really sure about that?", x =>
+    @<Button @onclick="() => x(true)">Yeah</Button>
+    );
+    }
+    return Observable.Return(false);
+})
+.Subscribe();
+    }
+
+    IDisposable previousAllToastNotification;
+    void HandleToastAllNotifications()
+    {
+        if (previousAllToastNotification != null)
+            previousAllToastNotification.Dispose();
+
+        var notifications = new List<IObservable<Unit>>()
+{
+ToastService.Push(ToastSeverity.UNKNOWN, "This is unknown", "Hello world from an unknown"),
+ToastService.Push(ToastSeverity.SUCCESS, "This is success", "Hello world from a success"),
+ToastService.Push(ToastSeverity.WARNING, "This is warning", "Hello world from a warning"),
+ToastService.Push(ToastSeverity.ERROR, "This is error", "Hello world from an error")
+};
+
+        previousAllToastNotification = notifications
+        .ToObservable()
+        .SelectMany(x => x)
+        .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        if (previousToastNotification != null)
+            previousToastNotification.Dispose();
+
+        if (previousAllToastNotification != null)
+            previousAllToastNotification.Dispose();
+    }
+}

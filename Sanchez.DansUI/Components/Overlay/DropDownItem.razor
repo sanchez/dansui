@@ -1,0 +1,33 @@
+﻿<div class="container" @attributes=@AdditionalAttributes>
+	@if (Prefix != null)
+	{
+		<div class="prefix">
+			@Prefix
+		</div>
+	}
+
+	<div class="content">
+		@ChildContent
+	</div>
+
+	@if (Suffix != null)
+	{
+		<div class="suffix">
+			@Suffix
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter]
+	public RenderFragment Prefix { get; set; }
+
+	[Parameter]
+	public RenderFragment Suffix { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object> AdditionalAttributes { get; set; }
+}

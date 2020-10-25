@@ -1,0 +1,34 @@
+﻿div.container {
+    grid-area: sidebar;
+    background-color: var(--nav-background);
+    color: var(--nav-foreground);
+}
+
+div.innerContainer {
+    min-width: 240px;
+    padding: 12px;
+}
+
+div.innerContainer.collapsed {
+    min-width: 0px;
+}
+
+::deep div.innerContainer > div, ::deep div.innerContainer > a > div {
+    display: grid;
+    grid-template-columns: 25px auto 25px;
+    grid-template-areas: "icon content action";
+    column-gap: 12px;
+    row-gap: 12px;
+    justify-items: stretch;
+    align-items: center;
+    justify-content: stretch;
+    align-content: start;
+}
+
+::deep a {
+    color: var(--link-secondary-color);
+}
+
+::deep a:hover {
+    color: var(--link-secondary-hover);
+}

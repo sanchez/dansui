@@ -1,0 +1,45 @@
+label {
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    font-size: 0.8em;
+}
+
+input {
+    display: none;
+}
+
+.check {
+    padding-top: 5px;
+}
+
+input:checked + .check {
+    color: var(--field-primary-enabled);
+}
+
+label.invalid input + .check {
+    color: var(--field-primary-error-color);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-content: stretch;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.fieldContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+}
+
+.validation-error {
+    color: var(--field-primary-error-color);
+}

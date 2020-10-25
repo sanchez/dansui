@@ -1,0 +1,41 @@
+@page "/overlay/dropover"
+
+<Button @onclick=HandleShowDropOver>This does things</Button>
+
+<DropOver @bind-Show=@showDropOver>
+    Hello World
+</DropOver>
+
+<h2>DropOn</h2>
+
+<DropOn @bind-Show=@showDropOn>
+    <TriggerContent>
+        <Button @onclick=HandleShowDropOn>This does cooler things</Button>
+    </TriggerContent>
+    <DropContent>
+        <div style="max-width: 400px; width: 100%; padding: 12px">
+            <h4>Hello from dropped</h4>
+            <p>
+                I have just been dropped, how cool this that?
+            </p>
+        </div>
+    </DropContent>
+</DropOn>
+
+@code {
+    bool showDropOver;
+
+    void HandleShowDropOver()
+    {
+        showDropOver = true;
+        StateHasChanged();
+    }
+
+    bool showDropOn;
+
+    void HandleShowDropOn()
+    {
+        showDropOn = true;
+        StateHasChanged();
+    }
+}

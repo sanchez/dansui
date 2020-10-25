@@ -1,0 +1,75 @@
+@using BlazorComponentUtilities
+@using System.Collections.ObjectModel
+@using System.Reactive.Linq
+@using System.Collections.Specialized
+@using System.ComponentModel
+
+@typeparam TItem
+
+<CascadingValue Name="@nameof(TableConfig)" Value=@tableConfig>
+    <div class="@tableContainer">
+        <table class=@tableClass>
+            <thead>
+                <tr>@Header</tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Items)
+                {
+                    <tr>@RowTemplate(item)</tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</CascadingValue>
+
+@code {
+    private string tableClass;
+    private TableConfig tableConfig = new TableConfig();
+
+    private string tableContainer => ShouldOverflow ? "container should-overflow" : "container";
+
+    protected void OnDataUpdate(object sender, object args)
+    {
+        StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Items != null)
+        {
+            ((INotifyCollectionChanged)Items).CollectionChanged -= OnDataUpdate;
+            ((INotifyPropertyChanged)Items).PropertyChanged -= OnDataUpdate;
+        }
+
+        base.OnParametersSet();
+
+        tableConfig.ShowBorders = ShowBorders;
+        tableConfig.AltRowColors = AlternateRowColors;
+
+        tableClass = new CssBuilder()
+        .AddClass("show-borders", when: tableConfig.ShowBorders)
+        .AddClass("alt-rows", when: tableConfig.AltRowColors)
+        .Build();
+
+        ((INotifyCollectionChanged)Items).CollectionChanged += OnDataUpdate;
+        ((INotifyPropertyChanged)Items).PropertyChanged += OnDataUpdate;
+    }
+
+    [Parameter]
+    public bool ShouldOverflow { get; set; } = true;
+
+    [Parameter]
+    public bool ShowBorders { get; set; } = true;
+
+    [Parameter]
+    public bool AlternateRowColors { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment Header { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> RowTemplate { get; set; }
+
+    [Parameter]
+    public ReadOnlyObservableCollection<TItem> Items { get; set; }
+}

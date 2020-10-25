@@ -1,0 +1,104 @@
+﻿@inherits LayoutComponentBase
+
+@using Sanchez.DansUI.Components.App
+@using Sanchez.DansUI.Components.Navbar
+@using Sanchez.DansUI.Components.Sidebar
+
+<ToastDisplayAdapter />
+<ModalDisplayAdapter />
+<PopperDisplayAdapter />
+<AppContainer>
+    <Navbar>
+        <Burger>
+            <Icon Type="Icons.IconType.MENU" @onclick=HandleToggleSidebar />
+        </Burger>
+        <Title>
+            <StyledLink Href="/">
+                DansUI Demo Board
+            </StyledLink>
+        </Title>
+        <Actions>Sanchez's Profile</Actions>
+    </Navbar>
+
+    <Sidebar IsOpen=@isSidebarOpen>
+        <SidebarSection>Standards</SidebarSection>
+        <StyledLink Href="/standards/color">
+            <SidebarItem>Coloring</SidebarItem>
+        </StyledLink>
+        <StyledLink Href="/standards/layout">
+            <SidebarItem>Layout</SidebarItem>
+        </StyledLink>
+
+        @CreateSection(IconType.MONITOR, "Display")
+        @CreateLink(IconType.CREDIT_CARD, "/display/card", "Card")
+        @CreateLink(IconType.LAYOUT_GRID, "/display/grid", "Grid")
+        @CreateLink(IconType.TABLE, "/display/table", "Table")
+        @CreateLink(IconType.TABLE, "/display/reflectiontable", "Reflection Table")
+        @CreateLink(IconType.LIST_ORDERED, "/display/stepper", "Stepper")
+
+        @CreateSection(IconType.COMMAND, "Components")
+        @CreateLink(IconType.HASH, "/component/heading", "Heading")
+        @CreateLink(IconType.MOUSE_POINTER, "/component/button", "Button")
+        @CreateLink(IconType.SEARCH, "/component/search", "SearchBar")
+        @CreateLink(IconType.TYPE, "/component/textbar", "TextBar")
+        @CreateLink(IconType.SHIELD_ALERT, "/component/notification", "Notification")
+        @CreateLink(IconType.LOADER_2, "/component/loader", "Loader")
+        @CreateLink(IconType.FILE_INPUT, "/component/fileinput", "File Input")
+
+        @CreateSection(IconType.FORM_INPUT, "Form")
+        @CreateLink(IconType.FORM_INPUT, "/form/form", "Example Form")
+        @CreateLink(IconType.FORM_INPUT, "/form/dropdown", "Dropdown Form")
+
+        @CreateSection(IconType.BRUSH, "Drawing")
+        @CreateLink(IconType.THERMOMETER, "/drawing/value", "Value")
+
+        @CreateSection(IconType.AIRPLAY, "Overlay")
+        @CreateLink(IconType.ACTIVITY, "/overlay/popper", "Popper")
+        @CreateLink(IconType.SIDEBAR_CLOSE, "/overlay/modal", "Modal")
+        @CreateLink(IconType.BELL, "/overlay/toast", "Toast")
+        @CreateLink(IconType.DROPLET, "/overlay/dropover", "DropOver")
+        @CreateLink(IconType.DROPLETS, "/overlay/dropdown", "DropDown")
+
+    </Sidebar>
+
+    <AppContent>
+        @Body
+    </AppContent>
+
+</AppContainer>
+
+@code {
+    protected bool isSidebarOpen = true;
+
+    protected void HandleToggleSidebar()
+    {
+        isSidebarOpen = !isSidebarOpen;
+        StateHasChanged();
+    }
+
+    protected RenderFragment CreateSection(IconType icon, string title)
+    {
+        return
+    @<SidebarSection>
+        <IconContent>
+            <Icon Type=@icon />
+        </IconContent>
+        <ChildContent>@title</ChildContent>
+    </SidebarSection>
+    ;
+    }
+
+    protected RenderFragment CreateLink(IconType icon, string location, string title)
+    {
+        return
+    @<StyledLink Href=@location>
+        <SidebarItem>
+            <IconContent>
+                <Icon Type=@icon />
+            </IconContent>
+            <ChildContent>@title</ChildContent>
+        </SidebarItem>
+    </StyledLink>
+    ;
+    }
+}

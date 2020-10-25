@@ -1,0 +1,30 @@
+@using Models
+@implements IStepperContent<AddressInfo>
+
+<EditForm Model=@addressInfo OnValidSubmit=@HandleSubmit>
+    <DataAnnotationsValidator />
+    <h3>User Details</h3>
+    <TwoPane>
+        <TextField Label="First Name" @bind-Value=@addressInfo.FirstName />
+        <TextField Label="Last Name" @bind-Value=@addressInfo.LastName />
+    </TwoPane>
+    <h3>Delivery Information</h3>
+    <TwoPane>
+        <TextField Label="Street Name" @bind-Value=@addressInfo.StreetName />
+        <TextField Label="State" @bind-Value=@addressInfo.State />
+    </TwoPane>
+
+    <Button IsPrimary="@true" type="submit">Next</Button>
+</EditForm>
+
+@code {
+    AddressInfo addressInfo = new AddressInfo();
+
+    private void HandleSubmit()
+    {
+        OnNext(addressInfo);
+    }
+
+    [Parameter]
+    public Action<AddressInfo> OnNext { get; set; }
+}

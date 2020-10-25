@@ -1,0 +1,32 @@
+label {
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+
+    font-size: 0.8em;
+}
+
+label > textarea {
+    margin-top: 4px;
+    background-color: var(--field-primary-background);
+    border: 1px solid var(--field-primary-outline);
+    color: var(--field-primary-color);
+    -moz-appearance: none;
+    appearance: none;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+label > textarea:focus {
+    outline: none !important;
+    border-color: var(--field-primary-enabled);
+}
+
+label.invalid > textarea {
+    border-color: var(--field-primary-error-color);
+}
+
+.validation-error {
+    color: var(--field-primary-error-color);
+}

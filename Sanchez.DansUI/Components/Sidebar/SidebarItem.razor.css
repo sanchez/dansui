@@ -1,0 +1,27 @@
+﻿div.container {
+    padding-bottom: 5px;
+
+    min-height: 1em;
+}
+
+div.container.collapsed {
+    grid-template-columns: 25px 0% 0%;
+    column-gap: 0px;
+}
+
+div.icon {
+}
+
+div.name {
+}
+
+div.collapsed > .name {
+    display: none;
+}
+
+div.action {
+}
+
+div.collapsed > .action {
+    display: none;
+}

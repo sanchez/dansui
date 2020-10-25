@@ -1,0 +1,33 @@
+﻿@using Sanchez.DansUI.Runner.Blazor.Models
+@implements IModal<UserDetailsModel>
+
+<EditForm Model=@model OnValidSubmit=@HandleSubmit>
+    <DataAnnotationsValidator />
+    <ModalFloating OnClose=@OnExit>
+        <ChildContent>
+            <h1>Enter User Details</h1>
+            <TwoPane>
+                <TextField Label="First Name" @bind-Value=@model.FirstName />
+                <TextField Label="Last Name" @bind-Value=@model.LastName />
+            </TwoPane>
+        </ChildContent>
+        <FooterContent>
+            <Button type="submit">Submit</Button>
+        </FooterContent>
+    </ModalFloating>
+</EditForm>
+
+@code {
+    protected UserDetailsModel model = new();
+
+    void HandleSubmit(EditContext context)
+    {
+        OnCompleted(model);
+    }
+
+    [Parameter]
+    public Action OnExit { get; set; }
+
+    [Parameter]
+    public Action<UserDetailsModel> OnCompleted { get; set; }
+}

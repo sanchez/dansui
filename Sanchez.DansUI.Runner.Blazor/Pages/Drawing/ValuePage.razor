@@ -1,0 +1,17 @@
+@page "/drawing/value"
+@using Sanchez.DansUI.Components.Drawing
+
+<h1>Value</h1>
+
+<Slimmer>
+    <TwoPane>
+        <div>
+            <Value CurrentValue=25 />
+        </div>
+        <div>
+            <Value CurrentValue=75>
+                <Suffix>%</Suffix>
+            </Value>
+        </div>
+    </TwoPane>
+</Slimmer>

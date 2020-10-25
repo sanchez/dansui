@@ -1,0 +1,26 @@
+﻿@using Sanchez.DansUI.Runner.Blazor.Models
+
+@implements IModal<PrimitiveWrapper<bool>>
+
+<ModalPanel OnClose=@OnExit>
+    <ChildContent>
+        <h1>Hello World</h1>
+        <div>This is some panel content</div>
+    </ChildContent>
+    <FooterContent>
+        <Button @onclick=@HandleNext>Oh yeah baby</Button>
+    </FooterContent>
+</ModalPanel>
+
+@code {
+    void HandleNext()
+    {
+        OnCompleted(new PrimitiveWrapper<bool>(true));
+    }
+
+    [Parameter]
+    public Action OnExit{get;set;}
+
+    [Parameter]
+    public Action<PrimitiveWrapper<bool>> OnCompleted{get;set;}
+}

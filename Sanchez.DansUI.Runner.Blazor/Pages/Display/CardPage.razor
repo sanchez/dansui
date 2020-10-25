@@ -1,0 +1,53 @@
+﻿@page "/display/card"
+
+<TwoPane>
+
+    <div>
+        <h1>Example Text Card</h1>
+        <Card>
+            <h1>Hello World</h1>
+            <p>This is inside the card</p>
+        </Card>
+    </div>
+
+    <div>
+        <h1>Example Footer Card</h1>
+        <Card>
+            <ChildContent>
+                <h1>Hello World</h1>
+                <p>This is just some normal text</p>
+            </ChildContent>
+            <FooterContent>
+                <Button>Click Me</Button>
+            </FooterContent>
+        </Card>
+    </div>
+
+    <div>
+        <h1>Example Picture Card </h1>
+        <Card>
+            <TitlePicture>
+                <img src="images/daniel.jpg" />
+            </TitlePicture>
+            <ChildContent>
+                <p>This is text content to go with</p>
+            </ChildContent>
+        </Card>
+    </div>
+
+    <div>
+        <h1>Example Picture and Footer Card</h1>
+        <Card>
+            <TitlePicture>
+                <img src="images/daniel.jpg" />
+            </TitlePicture>
+            <ChildContent>
+                <p>This is some normal text content</p>
+            </ChildContent>
+            <FooterContent>
+                <Button>Click Me</Button>
+            </FooterContent>
+        </Card>
+    </div>
+
+</TwoPane>

@@ -1,0 +1,32 @@
+﻿.show-borders {
+    border: 1px solid var(--primary);
+}
+
+td {
+    padding: 10px;
+    text-align: left;
+}
+
+.inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+    gap: 12px;
+}
+
+.content {
+    flex-grow: 1;
+}
+
+.prefix, .suffix {
+    opacity: 0.4;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.right-align {
+    text-align: right;
+}

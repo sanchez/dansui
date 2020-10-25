@@ -1,0 +1,65 @@
+.container {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.steps {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+}
+
+.step {
+    border: 1px solid #aaa;
+    padding: 18px;
+    border-radius: 3px;
+    width: 100%;
+    max-width: 150px;
+    cursor: pointer;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "icon title" "icon subtitle";
+    column-gap: 12px;
+    row-gap: 2px;
+}
+
+.step.active {
+    border-color: var(--primary);
+}
+
+.step-icon {
+    grid-area: icon;
+    align-self: center;
+}
+
+.step.active > .step-icon {
+    color: var(--primary);
+}
+
+.step-title {
+    grid-area: title;
+    
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.step.active > .step-title {
+    color: var(--primary);
+}
+
+.step-sub-title {
+    grid-area: subtitle;
+    
+    font-size: 0.8em;
+}
+
+.spacer {
+    flex-grow: 1;
+    border: 1px solid #aaa;
+    margin: 12px;
+}

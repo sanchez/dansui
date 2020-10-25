@@ -1,0 +1,34 @@
+@using Sanchez.DansUI.Icons
+
+<div class="container">
+    <div class="inner-container">
+        @if (OnClose != null)
+        {
+            <div class="close" @onclick="OnClose">
+                <Sanchez.DansUI.Components.Component.Icon Type="@IconType.X" />
+            </div>
+        }
+        <div class="content">
+            <Sanchez.DansUI.Components.App.AppContent>
+                @ChildContent
+            </Sanchez.DansUI.Components.App.AppContent>
+        </div>
+        @if (@FooterContent != null)
+        {
+            <div class="footer">
+                @FooterContent
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Action OnClose { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment FooterContent { get; set; }
+}

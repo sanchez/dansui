@@ -1,0 +1,46 @@
+@page "/overlay/popper"
+
+@using Sanchez.DansUI.Runner.Blazor.Models
+@using System.Reactive.Linq
+
+@inject IPopperService PopperService
+
+@implements IDisposable
+
+<h1>Popper Usage</h1>
+
+<div>
+    The current user is: @currentUser
+</div>
+
+<div>
+    <Button @onclick=HandleCreatePopper>
+        <ChildContent>Create Popper</ChildContent>
+        <Suffix>
+            <Icon Type="Icons.IconType.EXTERNAL_LINK" />
+        </Suffix>
+    </Button>
+</div>
+
+@code {
+    private IDisposable previousExecution;
+    public string currentUser = "Nothing Yet";
+
+    void HandleCreatePopper()
+    {
+        if (previousExecution != null) previousExecution.Dispose();
+        previousExecution = PopperService.Push<ExamplePopover, UserDetailsModel>()
+        .Do(x =>
+        {
+            currentUser = x.FirstName;
+            StateHasChanged();
+        })
+        .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        if (previousExecution != null)
+            previousExecution.Dispose();
+    }
+}

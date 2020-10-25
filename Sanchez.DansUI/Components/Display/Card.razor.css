@@ -1,0 +1,21 @@
+﻿div.container {
+    background-color: var(--card-base-background);
+    border: 1px solid var(--card-base-outline);
+    color: var(--card-base-color);
+    border-radius: 4px;
+}
+
+div.content {
+    padding: 18px;
+}
+
+::deep > div.picture * {
+    width: 100%;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+div.footer {
+    padding: 12px;
+    background-color: var(--card-base-footer);
+}

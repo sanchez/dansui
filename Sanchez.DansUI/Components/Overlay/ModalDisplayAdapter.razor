@@ -1,0 +1,51 @@
+﻿@inject IModalService ModalService
+@implements IDisposable
+@using System.Reactive.Linq
+
+@if (currentModal != null)
+{
+    <div class="container">
+        <div class="background" @onclick=@currentDismiss></div>
+        @currentModal
+    </div>
+}
+
+@code {
+    private IDisposable modalSubscription;
+    private RenderFragment currentModal;
+    private Action currentDismiss;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        modalSubscription = ModalService.DisplayStack()
+            .Do(x =>
+            {
+                if (x == null)
+                {
+                    currentModal = null;
+                    currentDismiss = null;
+                } 
+                else
+                {
+                    currentDismiss = x.OnClosed;
+                    currentModal = (builder) =>
+                    {
+                        builder.OpenComponent(0, x.Type);
+                        builder.AddAttribute(1, nameof(IModal<object>.OnCompleted), x.OnCompleted);
+                        builder.AddAttribute(2, nameof(IModal<object>.OnExit), x.OnClosed);
+                        builder.CloseComponent();
+                    };
+                }
+                StateHasChanged();
+            })
+            .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        if (modalSubscription != null)
+            modalSubscription.Dispose();
+    }
+}

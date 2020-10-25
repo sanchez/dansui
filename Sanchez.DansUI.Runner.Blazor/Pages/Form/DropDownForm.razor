@@ -1,0 +1,49 @@
+@page "/form/dropdown"
+@using Models
+
+<h1>Dropdown Form</h1>
+
+<Slimmer>
+    <EditForm Model=@requestForm OnValidSubmit=@HandleProductSubmit>
+        <DataAnnotationsValidator />
+        <Card>
+            <ChildContent>
+                <h2>Product Request</h2>
+                <TwoPane>
+                    <TextField Label="First Name" @bind-Value=@requestForm.FirstName />
+                    <TextField Label="Last Name" @bind-Value=@requestForm.LastName />
+                    <DropDownField Label="Product" Items=@products Context="product"
+                        @bind-Value=requestForm.RequestedProduct>
+                        <DropDownItem @onclick=product.OnSelect>
+                            <Prefix>
+                                <Icon Type=product.Item.Icon />
+                            </Prefix>
+                            <ChildContent>
+                                @product.Item.DisplayName
+                            </ChildContent>
+                        </DropDownItem>
+                    </DropDownField>
+                </TwoPane>
+            </ChildContent>
+            <FooterContent>
+                <Button IsPrimary="@true" type="submit">Submit Request</Button>
+            </FooterContent>
+        </Card>
+    </EditForm>
+</Slimmer>
+
+@code {
+    ProductRequest requestForm = new();
+
+    ICollection<ProductInformation> products = new List<ProductInformation>() {
+new(IconType.ACTIVITY, "Office", ProductType.MICROSOFT_OFFICE),
+new(IconType.ACTIVITY, "Word", ProductType.MICROSOFT_WORD),
+new(IconType.ACTIVITY, "Excel", ProductType.MICROSOFT_EXCEL),
+new(IconType.ACTIVITY, "PowerPoint", ProductType.MICROSOFT_POWERPOINT)
+};
+
+    void HandleProductSubmit()
+    {
+        // oh yeah
+    }
+}

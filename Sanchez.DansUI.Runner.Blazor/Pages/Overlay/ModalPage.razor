@@ -1,0 +1,62 @@
+﻿@page "/overlay/modal"
+
+@using Sanchez.DansUI.Runner.Blazor.Models
+@using System.Reactive.Linq
+
+@inject IModalService ModalService
+
+@implements IDisposable
+
+<h1>Modal</h1>
+
+<div>
+    Current User: @displayName
+</div>
+
+<div>
+    <Button @onclick=@HandleCreateModal>
+        <ChildContent>
+            Create Modal
+        </ChildContent>
+        <Suffix>
+            <Icon Type="IconType.EXTERNAL_LINK" />
+        </Suffix>
+    </Button>
+</div>
+
+@code {
+    private IDisposable previousExecution = null;
+
+    private string displayName;
+
+    void HandleCreateModal()
+    {
+        if (previousExecution != null) previousExecution.Dispose();
+
+        previousExecution =
+            ModalService.Push<ExamplePanel, PrimitiveWrapper<bool>>()
+            .SelectMany(x =>
+            {
+                if (x.Value) return ModalService.Push<ExampleModal, PrimitiveWrapper<bool>>();
+                return Observable.Return(new PrimitiveWrapper<bool>(false));
+            })
+            .SelectMany(x =>
+            {
+                if (x.Value) return ModalService.Push<DetailsModal, UserDetailsModel>();
+                return Observable.Return<UserDetailsModel>(null);
+            })
+            .Do(x =>
+            {
+                if (x != null)
+                    displayName = $"{x.FirstName} {x.LastName}";
+                StateHasChanged();
+            })
+            .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        if (previousExecution != null)
+            previousExecution.Dispose();
+    }
+}

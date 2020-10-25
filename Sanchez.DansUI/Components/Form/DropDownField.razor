@@ -1,0 +1,171 @@
+@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+@using System.Linq
+@using System.Reactive.Subjects
+@using System.Reactive.Linq
+@using System.Reactive.Threading.Tasks
+
+@typeparam T
+
+@implements IDisposable
+
+@inject IJSRuntime JSRuntime
+
+<div class="container">
+    <TextField Label=@Label @bind-Value=@textFieldContent @onfocus=HandleFocus @onblur=HandleBlur />
+
+    <div class="@dropdownClass">
+        <div class="innerDropContent">
+            @foreach (var item in items)
+            {
+                @ChildContent(GenerateItem(item))
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    Subject<bool> blurHandler = new();
+    IDisposable blurHandlerTrigger;
+
+    ICollection<T> items = new List<T>();
+
+    BehaviorSubject<string> textFieldInput = new("");
+    IDisposable itemsDispose;
+
+    string _innerTextFieldContent;
+    string textFieldContent
+    {
+        get
+        {
+            return _innerTextFieldContent;
+        }
+        set
+        {
+            _innerTextFieldContent = value;
+            textFieldInput.OnNext(value);
+        }
+    }
+
+    bool showDropdown;
+
+    string dropdownClass
+    {
+        get
+        {
+            if (showDropdown) return "dropdownContent show";
+            return "dropdownContent";
+        }
+    }
+
+    void HandleFocus()
+    {
+        showDropdown = true;
+        StateHasChanged();
+    }
+
+    void HandleBlur()
+    {
+        blurHandler.OnNext(true);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Value != null)
+        {
+            textFieldContent = SearchFilter(Value);
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            blurHandlerTrigger = blurHandler
+            .Throttle(TimeSpan.FromMilliseconds(200))
+            .SelectMany(x =>
+            {
+                showDropdown = false;
+                return InvokeAsync(StateHasChanged).ToObservable();
+            })
+            .Subscribe();
+
+            itemsDispose = textFieldInput
+            .Throttle(TimeSpan.FromMilliseconds(200))
+            .Select(async x =>
+            {
+                IEnumerable<T> filteredItems = Items;
+
+                filteredItems = filteredItems.Where(x => SearchFilter(x).Contains(textFieldContent ?? "",
+    StringComparison.InvariantCultureIgnoreCase));
+
+                if (MaxItems != 0)
+                    filteredItems = filteredItems.Take(MaxItems);
+
+                items = filteredItems.ToList();
+
+                var exactMatch = items.FirstOrDefault();
+                if (items.Count == 1)
+                {
+                    await InvokeAsync(() => ValueChanged.InvokeAsync(exactMatch));
+                }
+
+                await InvokeAsync(StateHasChanged);
+            })
+            .SelectMany(x => x.ToObservable())
+            .Subscribe();
+        }
+    }
+
+    async void HandleItemSelect(T item)
+    {
+        textFieldContent = SearchFilter(item);
+        StateHasChanged();
+        await ValueChanged.InvokeAsync(item);
+    }
+
+    DropDownEntry<T> GenerateItem(T item)
+    {
+        var evFactory = new EventCallbackFactory();
+        return new DropDownEntry<T>(item, () => HandleItemSelect(item));
+    }
+
+    static string DefaultLookup(T item)
+    {
+        var properties = typeof(T).GetProperties();
+
+        var stringProperty = properties.Where(x => x.PropertyType == typeof(string)).FirstOrDefault();
+        return stringProperty.GetValue(item) as string;
+    }
+
+    [Parameter]
+    public Func<T, string> SearchFilter { get; set; } = DefaultLookup;
+
+    [Parameter]
+    public int MaxItems { get; set; } = 10;
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public T Value { get; set; }
+
+    [Parameter]
+    public EventCallback<T> ValueChanged { get; set; }
+
+    [Parameter]
+    public ICollection<T> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<DropDownEntry<T>> ChildContent { get; set; }
+
+    public void Dispose()
+    {
+        if (blurHandlerTrigger != null) blurHandlerTrigger.Dispose();
+        if (itemsDispose != null) itemsDispose.Dispose();
+    }
+}

@@ -1,0 +1,15 @@
+.container {
+    outline: none;
+    position: relative;
+}
+
+.container > div {
+    display: none;
+}
+
+.container:focus > div {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}

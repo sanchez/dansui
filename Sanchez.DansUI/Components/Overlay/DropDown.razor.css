@@ -1,0 +1,7 @@
+﻿.drop-content {
+	padding: 12px;
+	border-radius: 5px;
+
+	border: 1px solid var(--dropdown-outline);
+	background-color: var(--dropdown-background);
+}

@@ -1,0 +1,27 @@
+﻿@if (IsOpen.Value || IconContent != null)
+{
+    <div class="@_innerContainerClass">
+    <div class="icon">
+        @IconContent
+    </div>
+
+    <div class="name">
+        @ChildContent
+    </div>
+
+    <div class="action"></div>
+</div>
+}
+
+@code {
+    private string _innerContainerClass => IsOpen.Value ? "container" : "container collapsed";
+
+    [CascadingParameter(Name = "SidebarIsOpen")]
+    public DefaultState<bool> IsOpen { get; set; }
+
+    [Parameter]
+    public RenderFragment IconContent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

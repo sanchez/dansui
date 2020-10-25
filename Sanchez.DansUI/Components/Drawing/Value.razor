@@ -1,0 +1,64 @@
+@using Sanchez.DansUI.Theming
+@using Sanchez.DansUI.Extensions
+@inject UITheme Theme
+
+<div class="value">
+    <svg class="drawing" width="100%" height="100%" viewBox="0 0 300 300">
+        <path d="M @_startX @_startY A @_valueRadius @_valueRadius 0 1 1 @_endX @_endY" stroke-width="15"
+            stroke-linecap="round" stroke="@_valueBackground" fill="none" />
+
+        <path d="M @_startX @_startY A @_valueRadius @_valueRadius 0 @_isBigArc 1 @_valueX @_valueY" stroke-width="15"
+            stroke-linecap="round" stroke="@_valueValueBackground" fill="none" />
+
+        @* <circle cx=@_valueX cy=@_valueY r="20" fill=@_valueHighlight /> *@
+    </svg>
+    <div class="content">
+        @if (Prefix != null)
+        {
+            <div class="prefix">@Prefix</div>
+        }
+        <div class="current">@CurrentValue</div>
+        @if (Suffix != null)
+        {
+            <div class="suffix">@Suffix</div>
+        }
+    </div>
+</div>
+
+@code {
+    protected int _viewBoxSize => 300;
+    protected int _viewBoxMidPoint => _viewBoxSize / 2;
+    protected double _valueAngle => 1.5 * Math.PI;
+    protected double _valueRadius => 120;
+    protected double _angleOffset => 0.75 * Math.PI;
+
+    protected double _valuePercentValue => (CurrentValue * 1.0 - Min) / (Max - Min);
+    protected double _valueAnglePosition => _angleOffset + (_valueAngle * _valuePercentValue);
+    protected int _isBigArc => (_valuePercentValue >= 0.5) ? 1 : 0;
+
+    protected double _startX => _viewBoxMidPoint + (_valueRadius * Math.Cos(_angleOffset));
+    protected double _startY => _viewBoxMidPoint + (_valueRadius * Math.Sin(_angleOffset));
+    protected double _endX => _viewBoxMidPoint + (_valueRadius * Math.Cos(_angleOffset + _valueAngle));
+    protected double _endY => _viewBoxMidPoint + (_valueRadius * Math.Sin(_angleOffset + _valueAngle));
+    protected double _valueX => _viewBoxMidPoint + (_valueRadius * Math.Cos(_valueAnglePosition));
+    protected double _valueY => _viewBoxMidPoint + (_valueRadius * Math.Sin(_valueAnglePosition));
+
+    protected string _valueBackground => Theme.Paper.RelativeBrightness(0.3f).ToHexString();
+    protected string _valueValueBackground => Theme.Primary.RelativeBrightness(0.2f).ToHexString();
+    protected string _valueHighlight => Theme.Primary.ToHexString();
+
+    [Parameter]
+    public int Min { get; set; } = 0;
+
+    [Parameter]
+    public int Max { get; set; } = 100;
+
+    [Parameter]
+    public int CurrentValue { get; set; }
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; }
+}

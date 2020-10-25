@@ -1,0 +1,33 @@
+.value {
+    max-width: 240px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    position: relative;
+}
+
+.content {
+    position: absolute;
+    bottom: 30px;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.prefix {
+    align-self: center;
+}
+
+.current {
+    font-size: 1.8em;
+}
+
+.suffix {
+    align-self: flex-start;
+}

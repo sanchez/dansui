@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Sanchez.DansUI.Theming
+@using Sanchez.DansUI.Extensions
+@using System.Drawing
+
+@inject UITheme Theme
+
+<NavLink href="@Href" Match="@Match" ActiveClass="active" @onmouseover="@OnMouseOver" @onmouseout="@OnMouseOut">
+    @ChildContent
+</NavLink>
+
+@code {
+    private bool _isHovering = false;
+
+    [CascadingParameter(Name = "ComponentContext")]
+    public DefaultState<ComponentContext> ComponentContext { get; set; }
+
+    [Parameter]
+    public string Href { get; set; }
+
+    [Parameter]
+    public NavLinkMatch Match { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private void OnMouseOver(MouseEventArgs ev)
+    {
+        if (!_isHovering)
+        {
+            _isHovering = true;
+            StateHasChanged();
+        }
+    }
+
+    private void OnMouseOut(MouseEventArgs ev)
+    {
+        if (_isHovering)
+        {
+            _isHovering = false;
+            StateHasChanged();
+        }
+    }
+}

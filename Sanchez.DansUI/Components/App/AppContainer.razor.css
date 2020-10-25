@@ -1,0 +1,11 @@
+﻿div {
+    width: 100%;
+    min-height: 100vh;
+
+    font-family: 'Source Sans Pro', sans-serif;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: "navbar navbar" "sidebar content" "sidebar footer";
+}

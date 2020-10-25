@@ -1,0 +1,46 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-content: stretch;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.fieldContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 7px;
+    background-color: var(--field-primary-background);
+    border: 1px solid var(--field-primary-enabled);
+    color: var(--field-primary-fixcolor);
+    padding: 4px 12px;
+    min-height: 28px;
+    border-radius: 4px;
+}
+
+input {
+    background-color: inherit;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    color: var(--field-primary-color);
+    font-size: inherit;
+
+    flex: 1 0;
+    flex-basis: 50px;
+}
+
+input:focus {
+    outline: none !important;
+}
+
+.fieldContainer > span {
+    flex: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+}

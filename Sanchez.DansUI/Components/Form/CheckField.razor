@@ -1,0 +1,57 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@inherits InputBase<bool>
+
+<div class="container">
+    <label class="@CssClass">
+        @if (Label != null)
+        {
+            <span>@Label</span>
+        }
+
+        <span class="fieldContainer">
+            <input type="checkbox" @attributes="@AdditionalAttributes" @bind-value="CurrentValue" />
+            <div class="check">
+                @if (CurrentValue)
+                {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                }
+                else
+                {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                    </svg>
+                }
+            </div>
+
+            <span>@ChildContent</span>
+        </span>
+    </label>
+
+    @foreach (var message in EditContext.GetValidationMessages(FieldIdentifier))
+    {
+        <div class="validation-error">@message</div>
+    }
+</div>
+
+@code {
+
+    protected override bool TryParseValueFromString(string value, [MaybeNullWhen(false)] out bool result,
+        [NotNullWhen(false)] out string validationErrorMessage)
+    {
+        throw new NotSupportedException("The check component does not support string values");
+    }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

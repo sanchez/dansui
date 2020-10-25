@@ -1,0 +1,60 @@
+@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+@using Sanchez.DansUI.IServices
+@using System.Reactive.Linq
+@using System.Reactive.Threading.Tasks
+
+@inject IJSRuntime JSRuntime
+@inject IBrowserService BrowserService
+
+@implements IDisposable
+
+<div @ref=@triggerRef>
+    @TriggerContent
+</div>
+
+@code {
+    ElementReference triggerRef;
+
+    IDisposable onResizeDispose;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        BrowserService.OnReady(() =>
+        {
+            onResizeDispose = BrowserService.OnResize
+                .Throttle(TimeSpan.FromSeconds(1))
+                .SelectMany(x => InvokeAsync(StateHasChanged).ToObservable())
+                .Subscribe();
+        });
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        var currentBounding = await JSRuntime.GetBoundingBox(triggerRef);
+        var currentWindowFrame = await JSRuntime.GetWindowSize();
+        var heightPercent = currentBounding.MidY / currentWindowFrame.Height;
+    }
+
+    [Parameter]
+    public bool Show { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ShowChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment DropContent { get; set; }
+
+    [Parameter]
+    public RenderFragment TriggerContent { get; set; }
+
+    public void Dispose()
+    {
+        if (onResizeDispose != null)
+            onResizeDispose.Dispose();
+    }
+}

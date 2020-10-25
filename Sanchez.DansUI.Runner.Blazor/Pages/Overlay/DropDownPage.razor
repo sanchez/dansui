@@ -1,0 +1,51 @@
+﻿@using System.Linq
+
+@page "/overlay/dropdown"
+
+<h1>DropDown</h1>
+
+<DropDown Title="Select Movie" Context="Callback">
+	@foreach (var movie in movies)
+	{
+		<DropDownItem @onclick="() => HandleItemSelected(movie, Callback)">
+			<Prefix>
+				<Icon Type=IconType.FILM />
+			</Prefix>
+			<ChildContent>@movie.Item1</ChildContent>
+			<Suffix>@movie.Item2</Suffix>
+		</DropDownItem>
+	}
+</DropDown>
+
+@code {
+	ICollection<(string, int)> movies = new List<(string, int)>()
+	{
+		("Gone with the Wind", 1939),
+		("Casablanca", 1942),
+		("Dr. No", 1962),
+		("The Good, the Bad and the Ugly", 1966),
+		("Planet of the Apes", 1968),
+		("Psycho", 1960),
+		("American Graffiti", 1973),
+		("Carrie", 1976),
+		("Enter the Dragon", 1973),
+		("Escape from Alcatraz", 1979),
+		("Seven Samurai", 1954),
+		("Lawrence of Arabia", 1962),
+		("The Godfather", 1972),
+		("Ben-Hur", 1972),
+		("The Adventures of Robin Hood", 1938),
+		("The Three Musketeers", 1973),
+		("Butch Cassidy and the Sundance Kid", 1969),
+		("Modern Times", 1936),
+		("Blazing Saddles", 1974)
+	};
+
+	ICollection<(string, int)> ResultMovies() {
+		return movies.Take(10).ToList();
+	}
+
+	void HandleItemSelected((string, int) movie, Action<bool> dropdownState) {
+		dropdownState(false);
+	}
+}

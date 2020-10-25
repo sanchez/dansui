@@ -1,0 +1,45 @@
+﻿div.navbar {
+    grid-area: navbar;
+    min-height: 52px;
+    background-color: var(--nav-background);
+    color: var(--nav-foreground);
+    padding: 4px;
+
+    display: grid;
+    grid-template-columns: 85px 1fr 240px;
+    grid-template-areas: "burger title actions" "blank extra extra";
+    justify-items: stretch;
+    align-items: center;
+    justify-content: stretch;
+    align-content: stretch;
+
+    padding: 0px 25px;
+}
+
+div.burger {
+    grid-area: burger;
+}
+
+div.title {
+    grid-area: title;
+
+    font-size: 24px;
+    font-weight: bold;
+}
+
+div.actions {
+    grid-area: actions;
+    justify-self: end;
+}
+
+div.extra {
+    grid-area: extra;
+}
+
+::deep a {
+    color: var(--link-secondary-color);
+}
+
+::deep a:hover {
+    color: var(--link-secondary-hover);
+}

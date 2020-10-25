@@ -1,0 +1,81 @@
+﻿@using DynamicData
+@using DynamicData.Binding
+@using Sanchez.DansUI.Icons
+@using Sanchez.DansUI.Controllers
+@using Sanchez.DansUI.Components.Component
+@using System.Reactive.Linq
+
+@implements IDisposable
+
+<div class="container">
+    <div>
+        <Icon Type="IconType.CHEVRON_LEFT" @onclick=HandlePrev />
+    </div>
+    <div class="indexer">
+        @foreach (var (i, isActive) in CalculateDisplayPages(2))
+        {
+            if (isActive)
+            {
+                <div class="index active">@i</div>
+            }
+            else
+            {
+                <div class="index" @onclick="() => SetPage(i)">@i</div>
+            }
+        }
+    </div>
+    <div>
+        <Icon Type="IconType.CHEVRON_RIGHT" @onclick=HandleNext />
+    </div>
+</div>
+
+@code {
+    private IDisposable lastSubscribe;
+
+    [Parameter]
+    public PageController PageController { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (lastSubscribe != null) lastSubscribe.Dispose();
+        lastSubscribe = PageController
+        .Do(x =>
+        {
+            StateHasChanged();
+        })
+        .Subscribe();
+    }
+
+    protected ICollection<(int, bool)> CalculateDisplayPages(int stepSize)
+    {
+        return Enumerable
+        .Range(PageController.CurrentPage - stepSize, stepSize * 2 + 1)
+        .Where(x => x > 0 && (PageController.MaxPages == -1 || x <= PageController.MaxPages))
+        .Select(x => (x, x == PageController.CurrentPage))
+        .ToList();
+    }
+
+    protected void SetPage(int newPage)
+    {
+        PageController.CurrentPage = newPage;
+    }
+
+    protected void HandlePrev()
+    {
+        if (PageController.CurrentPage <= 1) return;
+        PageController.CurrentPage -= 1;
+    }
+
+    protected void HandleNext()
+    {
+        if (PageController.MaxPages != -1 && PageController.CurrentPage < PageController.MaxPages)
+            PageController.CurrentPage += 1;
+    }
+
+    public void Dispose()
+    {
+        if (lastSubscribe != null) lastSubscribe.Dispose();
+    }
+}

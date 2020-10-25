@@ -1,0 +1,56 @@
+@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+
+@inject IJSRuntime JSRuntime
+
+<div tabindex="-1" class="@ContainerCssClass" @ref=@containerRef @onfocusout=@HandleLoseFocus>
+    <div>
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    ElementReference containerRef;
+
+    string ContainerCssClass
+    {
+        get
+        {
+            if (Show)
+                return "container show";
+            return "container";
+        }
+    }
+
+    [Parameter]
+    public bool Show { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ShowChanged { get; set; }
+
+    Task HandleLoseFocus()
+    {
+        return ShowChanged.InvokeAsync(false);
+    }
+
+    bool lastShowValue;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Show)
+        {
+            await JSRuntime.Focus(containerRef);
+        }
+
+        if (Show == false && lastShowValue != Show)
+        {
+            await JSRuntime.Blur(containerRef);
+        }
+        lastShowValue = Show;
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

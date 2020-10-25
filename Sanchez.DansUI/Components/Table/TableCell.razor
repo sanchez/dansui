@@ -1,0 +1,54 @@
+﻿@using BlazorComponentUtilities
+
+<td class=@cellClass>
+    <div class="inner">
+        @if (Prefix != null && ShowPrefix)
+        {
+            <div class="prefix">@Prefix</div>
+        }
+        <div class="content">@ChildContent</div>
+        @if (Suffix != null && ShowSuffix)
+        {
+            <div class="suffix">@Suffix</div>
+        }
+    </div>
+</td>
+
+@code {
+    private string cellClass;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        cellClass = new CssBuilder()
+        .AddClass("show-borders", when: TableConfig.ShowBorders)
+        .AddClass("center-align", when: CenterAlign)
+        .AddClass("right-align", when: RightAlign)
+        .Build();
+    }
+
+    [CascadingParameter(Name = nameof(TableConfig))]
+    public TableConfig TableConfig { get; set; }
+
+    [Parameter]
+    public bool CenterAlign { get; set; } = false;
+
+    [Parameter]
+    public bool RightAlign { get; set; } = false;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public bool ShowPrefix { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; }
+
+    [Parameter]
+    public bool ShowSuffix { get; set; } = true;
+}

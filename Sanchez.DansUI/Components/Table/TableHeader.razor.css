@@ -1,0 +1,25 @@
+﻿.show-borders {
+    border: 1px solid var(--primary);
+}
+
+th {
+    padding: 10px 30px;
+    background-color: var(--table-header-background);
+}
+
+.inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.sorter {
+    padding-left: 12px;
+    user-select: none;
+}
+
+.is-interactive {
+    cursor: pointer;
+}

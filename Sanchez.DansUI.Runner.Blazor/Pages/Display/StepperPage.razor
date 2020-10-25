@@ -1,0 +1,40 @@
+@using Models
+
+@page "/display/stepper"
+
+<h1>Stepper</h1>
+
+<Stepper Steps=@steps ActiveStep=@activeStep />
+
+<Slimmer>
+    <Stepper Steps=@steps @bind-ActiveStep=@activeStep />
+</Slimmer>
+
+@code {
+    private IStepItem extrasStep;
+    private IStepItem addressStep;
+    private IStepItem shippingStep;
+
+    private ICollection<IStepItem> steps = new List<IStepItem>();
+
+    private IStepItem activeStep;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        extrasStep = new Step<Extras, bool>("Extras");
+        addressStep = new Step<EnterAddress, AddressInfo>(IconType.MAP_PIN, "Address", "Billing and Postal Address Information",
+        x =>
+        {
+            activeStep = shippingStep;
+            StateHasChanged();
+        });
+        shippingStep = new Step<Shipping, bool>(IconType.TRUCK, "Shipping", "Shipping Tiers");
+
+        steps.Add(extrasStep);
+        steps.Add(addressStep);
+        steps.Add(shippingStep);
+        activeStep = steps.First();
+    }
+}

@@ -1,0 +1,18 @@
+@page "/component/search"
+
+<h1>SearchBar</h1>
+
+<Slimmer>
+    <Card>
+        <h2>Types of Dogs</h2>
+        <SearchBar @bind-Value=@DogFilter>
+            <Prefix>
+                <Icon Type="Icons.IconType.SEARCH" />
+            </Prefix>
+        </SearchBar>
+    </Card>
+</Slimmer>
+
+@code {
+    string DogFilter { get; set; }
+}

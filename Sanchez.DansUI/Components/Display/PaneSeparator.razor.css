@@ -1,0 +1,9 @@
+.container {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: var(--primary);
+}
+
+hr {
+    border: 1px solid var(--primary);
+}

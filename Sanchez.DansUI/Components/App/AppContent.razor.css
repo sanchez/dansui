@@ -1,0 +1,60 @@
+﻿div {
+    grid-area: content;
+    padding: 14px;
+
+    font-family: 'Source Sans Pro', sans-serif;
+
+    background-color: var(--paper-background);
+    color: var(--paper-foreground);
+}
+
+::deep a {
+    color: var(--link-primary-color);
+}
+
+::deep a {
+    color: var(--link-primary-hover);
+}
+
+::deep h1 {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+::deep h1:not(:first-child), ::deep h2:not(:first-child), ::deep h3:not(:first-child), ::deep h4:not(:first-child), ::deep h5:not(:first-child), ::deep h6:not(:first-child){
+    margin-top: 25px;
+}
+
+::deep h1::before {
+    content: '#';
+    margin-right: 12px;
+    color: var(--primary);
+}
+
+::deep h2::before {
+    content: '##';
+    margin-right: 12px;
+    color: var(--primary);
+}
+
+::deep h3::before {
+    content: '###';
+    margin-right: 12px;
+    color: var(--primary);
+}
+
+::deep h4 {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+}
+
+::deep h4::before {
+    content: '##\A##';
+    margin-right: 12px;
+    white-space: pre-wrap;
+    color: var(--primary);
+    font-size: 0.7em;
+    line-height: 1em;
+}

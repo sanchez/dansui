@@ -1,0 +1,20 @@
+@page "/component/fileinput"
+@using Models
+
+<h1>File Input</h1>
+
+<Slimmer>
+    <EditForm Model=@model>
+        <Card>
+            <TwoPane>
+                <TextField Label="FirstName" @bind-Value=@model.FirstName />
+                <TextField Label="LastName" @bind-Value=@model.LastName />
+                <FileInput Label="Avatar" />
+            </TwoPane>
+        </Card>
+    </EditForm>
+</Slimmer>
+
+@code {
+    protected UserDetailsModel model = new();
+}

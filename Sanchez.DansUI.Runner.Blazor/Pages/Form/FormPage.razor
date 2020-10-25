@@ -1,0 +1,72 @@
+﻿@page "/form/form"
+@using Models
+
+<h1>Simple Form</h1>
+
+<Slimmer>
+    <EditForm Model=@biddingForm>
+        <DataAnnotationsValidator />
+        <Card>
+            <ChildContent>
+                <h2>User Bidding Details</h2>
+                <TwoPane>
+                    <TextField Label="Username" @bind-Value=@biddingForm.UserName />
+                    <PasswordField Label="Password" @bind-Value=@biddingForm.Password />
+
+                    <NumberField Label="Bid Amount" @bind-Value=@biddingForm.BidAmount>
+                        <Prefix>$</Prefix>
+                        <Suffix>AUD</Suffix>
+                    </NumberField>
+
+                </TwoPane>
+                <PaneSeparator />
+                <OnePane>
+
+                    <CheckField @bind-Value=@biddingForm.EmailUpdates>
+                        Would you like to receive email updates?
+                    </CheckField>
+
+                    <CheckField Label="Some Label" @bind-Value=@biddingForm.AgreeToTerms>
+                        Agree to the terms of conditions for placing a bid. This content could actually just keep on
+                        going the component should be able to wrap the content around while also being centered.
+                    </CheckField>
+
+                </OnePane>
+
+            </ChildContent>
+            <FooterContent>
+                <Button IsPrimary="@true" type="submit">Place Bid</Button>
+            </FooterContent>
+        </Card>
+    </EditForm>
+</Slimmer>
+
+<h1>Comment Form</h1>
+
+<Slimmer>
+    <EditForm Model=@commentForm>
+        <DataAnnotationsValidator />
+        <Card>
+            <ChildContent>
+                <h2>Submit Comment</h2>
+                <TwoPane>
+                    <TextField Label="Display Name" @bind-Value=@commentForm.DisplayName />
+                    <PasswordField Label="Password" @bind-Value=@commentForm.Password />
+                </TwoPane>
+                <PaneSpacing />
+                <OnePane>
+                    <TextAreaField Label="Comment" @bind-Value=@commentForm.Comment />
+                </OnePane>
+            </ChildContent>
+            <FooterContent>
+                <Button IsPrimary="@true" type="submit">Submit</Button>
+            </FooterContent>
+        </Card>
+    </EditForm>
+</Slimmer>
+
+@code {
+    BiddingForm biddingForm = new BiddingForm();
+
+    CommentForm commentForm = new CommentForm();
+}

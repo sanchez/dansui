@@ -1,0 +1,51 @@
+@inject IPopperService PopperService
+@implements IDisposable
+@using System.Reactive.Linq
+
+@if (currentPopper != null)
+{
+    <div class="container">
+        <div class="background" @onclick=@currentDismiss></div>
+        @currentPopper
+    </div>
+}
+
+@code {
+    private IDisposable popperSubscription;
+    private RenderFragment currentPopper;
+    private Action currentDismiss;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        popperSubscription = PopperService.DisplayStack()
+        .Do(x =>
+        {
+            if (x == null)
+            {
+                currentPopper = null;
+                currentDismiss = null;
+            }
+            else
+            {
+                currentDismiss = x.OnClosed;
+                currentPopper = (builder) =>
+                {
+                    builder.OpenComponent(0, x.Type);
+                    builder.AddAttribute(1, nameof(IPopper<object>.OnCompleted), x.OnCompleted);
+                    builder.AddAttribute(2, nameof(IPopper<object>.OnExit), x.OnClosed);
+                    builder.CloseComponent();
+                };
+            }
+            StateHasChanged();
+        })
+        .Subscribe();
+    }
+
+    public void Dispose()
+    {
+        if (popperSubscription != null)
+            popperSubscription.Dispose();
+    }
+}

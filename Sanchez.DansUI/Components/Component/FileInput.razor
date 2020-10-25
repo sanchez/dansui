@@ -1,0 +1,71 @@
+@using Microsoft.AspNetCore.Components.Forms;
+
+<div class="container">
+    <label>
+        @if (Label != null)
+        {
+            <span>@Label</span>
+        }
+
+        <span class="fieldContainer">
+            @if (Prefix != null)
+            {
+                <span>@Prefix</span>
+            }
+
+            <div class="info">
+                @if (selectedFiles.Count == 0)
+                {
+                    <text>No Files Selected</text>
+                }
+                else
+                {
+                    @string.Join(", ", selectedFiles)
+                }
+            </div>
+
+            @if (Suffix != null)
+            {
+                <span>@Suffix</span>
+            }
+        </span>
+        <InputFile OnChange=@HandleChange @attributes=@AdditionalAttributes />
+    </label>
+</div>
+
+@code {
+    private ICollection<string> selectedFiles = new List<string>();
+
+    private Task HandleChange(InputFileChangeEventArgs ev)
+    {
+        selectedFiles.Clear();
+        if (ev.FileCount == 0)
+        {
+        }
+        else if (ev.FileCount == 1)
+        {
+            selectedFiles.Add(ev.File.Name);
+        }
+        else
+        {
+            foreach (var file in ev.GetMultipleFiles(ev.FileCount))
+                selectedFiles.Add(file.Name);
+        }
+        return OnChange.InvokeAsync(ev);
+    }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; } = @<Icon Type="Icons.IconType.FILE_INPUT" />;
+
+    [Parameter]
+    public EventCallback<InputFileChangeEventArgs> OnChange { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+}

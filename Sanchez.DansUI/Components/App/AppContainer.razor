@@ -1,0 +1,32 @@
+﻿@using Microsoft.JSInterop
+@using Sanchez.DansUI.Configuration
+@using Sanchez.DansUI.IServices
+
+@inject IJSRuntime JSRuntime
+@inject ThemeLoader ThemeLoader
+@inject IBrowserService BrowserService
+
+<div>
+    @ChildContent
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var styleContent = ThemeLoader.GenerateStyleContent();
+        await JSRuntime.InvokeVoidAsync("DansUI.styles.setStyleTheme", styleContent);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            await BrowserService.Init();
+        }
+    }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

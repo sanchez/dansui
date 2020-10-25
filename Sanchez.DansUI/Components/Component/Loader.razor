@@ -1,0 +1,42 @@
+@using Sanchez.DansUI.Theming
+@using Sanchez.DansUI.Extensions
+@inject UITheme Theme
+
+@if (IsLoading)
+{
+    <div class="loader">
+    <svg viewBox="0 0 100 100">
+        <circle fill="none" stroke="@ValueHighlight" stroke-width="4" cx="50" cy="50" r="44" style="opacity:0.5;" />
+
+        <circle fill="#fff" stroke="@ValueHighlight" stroke-width="3" cx="8" cy="54" r="6">
+            <animateTransform attributeName="transform" dur="2s" type="rotate" from="0 50 48" to="360 50 52"
+                repeatCount="indefinite" begin="0s" />
+        </circle>
+
+        <circle fill="#fff" stroke="@ValueHighlight" stroke-width="3" cx="8" cy="54" r="6">
+            <animateTransform attributeName="transform" dur="2s" type="rotate" from="0 50 48" to="360 50 52"
+                repeatCount="indefinite" begin="0.2s" />
+        </circle>
+
+        <circle fill="#fff" stroke="@ValueHighlight" stroke-width="3" cx="8" cy="54" r="6">
+            <animateTransform attributeName="transform" dur="2s" type="rotate" from="0 50 48" to="360 50 52"
+                repeatCount="indefinite" begin="0.4s" />
+        </circle>
+
+    </svg>
+</div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    protected string ValueHighlight => Theme.Primary.ToHexString();
+
+    [Parameter]
+    public bool IsLoading { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

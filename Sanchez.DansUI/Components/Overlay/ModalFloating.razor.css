@@ -1,0 +1,35 @@
+.container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.inner-container {
+    position: relative;
+    left: -50%;
+    width: 100vw;
+    max-width: 650px;
+
+    background-color: var(--paper-background);
+    color: var(--paper-foreground);
+
+    border-radius: 5px;
+}
+
+.content {
+    padding: 20px;
+}
+
+.footer {
+    padding: 12px;
+    background-color: var(--modal-footer-background-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
