@@ -5,7 +5,7 @@
             <span>@Prefix</span>
         }
 
-        <input type="text" @attributes=@AdditionalAttributes value=@Value @onchange=@HandleChange />
+        <input type="text" @attributes=@AdditionalAttributes value=@Value @oninput=@HandleChange />
 
         @if (Suffix != null)
         {
