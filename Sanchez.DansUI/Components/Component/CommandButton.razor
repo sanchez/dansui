@@ -23,7 +23,11 @@
 			{
 				Command.CanExecuteChanged -= this.HandleCommandUpdated;
 			}
-			newCommand.CanExecuteChanged += this.HandleCommandUpdated;
+
+			if (newCommand != null)
+			{
+				newCommand.CanExecuteChanged += this.HandleCommandUpdated;
+			}
 		}
 
 		return base.SetParametersAsync(parameters);
