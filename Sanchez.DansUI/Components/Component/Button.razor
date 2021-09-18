@@ -1,4 +1,4 @@
-﻿<button class="@buttonClass" @attributes="@AdditionalAttributes" @onmousedown="@OnButtonDown" @onmouseup="@OnButtonUp" @onkeydown="@OnButtonDown" @onkeyup="@OnButtonUp">
+﻿<button class="@buttonClass" @attributes="@AdditionalAttributes" @onmousedown="@OnButtonDown" @onmouseup="@OnButtonUp" @onkeydown="@OnButtonDown" @onkeyup="@OnButtonUp" disabled=@IsDisabled>
     @if (Prefix != null)
     {
         <div>
@@ -29,6 +29,7 @@
             if (IsPrimary) classes.Add("primary");
             else if (IsSecondary) classes.Add("secondary");
             else classes.Add("base");
+            if (IsDisabled) classes.Add("disabled");
 
             if (IsActive) classes.Add("active");
 
@@ -53,6 +54,9 @@
             StateHasChanged();
         }
     }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
 
     [Parameter]
     public bool IsPrimary { get; set; }

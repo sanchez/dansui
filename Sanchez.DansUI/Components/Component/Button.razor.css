@@ -44,3 +44,9 @@ button.secondary {
 button.active {
     box-shadow: 0px 0px 5px inset !important;
 }
+
+button.disabled {
+    opacity: 0.45 !important;
+    cursor: default;
+    pointer-events: none;
+}

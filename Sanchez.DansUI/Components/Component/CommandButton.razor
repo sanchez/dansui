@@ -1,0 +1,49 @@
+﻿@using System.Windows.Input
+
+<Button IsPrimary=@IsPrimary IsSecondary=@IsSecondary IsDisabled=canExecute Prefix=@Prefix Suffix=@Suffix ChildContent=@ChildContent @onclick=HandleClick />
+
+@code {
+	bool canExecute => !Command.CanExecute(this);
+
+	void HandleClick(MouseEventArgs args)
+	{
+		Command.Execute(args);
+	}
+
+	void HandleCommandUpdated(object sender, EventArgs e)
+	{
+		StateHasChanged();
+	}
+
+	public override Task SetParametersAsync(ParameterView parameters)
+	{
+		if (parameters.TryGetValue<ICommand>(nameof(Command), out var newCommand))
+		{
+			if (Command != null)
+			{
+				Command.CanExecuteChanged -= HandleCommandUpdated;
+			}
+			newCommand.CanExecuteChanged += HandleCommandUpdated;
+		}
+
+		return base.SetParametersAsync(parameters);
+	}
+
+	[Parameter]
+	public ICommand Command { get; set; }
+
+	[Parameter]
+	public bool IsPrimary { get; set; }
+
+	[Parameter]
+	public bool IsSecondary { get; set; }
+
+	[Parameter]
+	public RenderFragment Prefix { get; set; }
+	
+	[Parameter]
+	public RenderFragment ChildContent{ get; set; }
+
+	[Parameter]
+	public RenderFragment Suffix { get; set; }
+}

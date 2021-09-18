@@ -1,5 +1,9 @@
 ﻿@page "/component/button"
 
+@using System.Reactive.Linq
+@using System.Windows.Input
+@using Sanchez.DansUI.Runner.Blazor.Models
+
 <h1>Button</h1>
 
 A normal button: <Button>Normal</Button>
@@ -19,3 +23,21 @@ Primary Button: <Button IsPrimary="@true">Primary</Button>
 <br />
 Secondary Button: <Button IsSecondary="@true">Secondary</Button>
 <br />
+Disabled Button: <Button IsDisabled="@true" @onclick="HandleClick">Disabled</Button>
+<br />
+Command Button: <CommandButton Command=@_wrappedCommand>Command Button</CommandButton>
+
+@code {
+    private ICommand _command;
+    ICommand _wrappedCommand => _command ??= new CustomCommand(HandleCommandClick);
+
+    async Task HandleCommandClick()
+    {
+        await Task.Delay(1000);
+    }
+
+    void HandleClick()
+    {
+        // Hello
+    }
+}
