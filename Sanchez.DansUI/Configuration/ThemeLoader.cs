@@ -108,6 +108,8 @@ namespace Sanchez.DansUI.Configuration
             return new List<(string, Color)>()
             {
                 ($"button-{styleName}-background", background),
+                ($"button-{styleName}-disabled", background.SetOpacity(0.3f)),
+                ($"button-{styleName}-color-disabled", background.GetTextColoring().SetOpacity(0.3f)),
                 ($"button-{styleName}-outline", background.RelativeBrightness(0.2f)),
                 ($"button-{styleName}-color", background.GetTextColoring())
             };

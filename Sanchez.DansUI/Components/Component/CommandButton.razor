@@ -1,4 +1,5 @@
 ﻿@using System.Windows.Input
+@using System.Reactive
 
 <Button IsPrimary=@IsPrimary IsSecondary=@IsSecondary IsDisabled=canExecute Prefix=@Prefix Suffix=@Suffix ChildContent=@ChildContent @onclick=HandleClick />
 
@@ -7,7 +8,7 @@
 
 	void HandleClick(MouseEventArgs args)
 	{
-		Command.Execute(args);
+		Command.Execute(CommandMapping(args));
 	}
 
 	void HandleCommandUpdated(object sender, EventArgs e)
@@ -50,4 +51,7 @@
 
 	[Parameter]
 	public RenderFragment Suffix { get; set; }
+
+	[Parameter]
+	public Func<MouseEventArgs, object> CommandMapping { get; set; } = x => Unit.Default;
 }

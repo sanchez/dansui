@@ -29,10 +29,20 @@ button.base {
     color: var(--button-base-color);
 }
 
+button.base.disabled {
+    background-color: var(--button-base-disabled);
+    color: var(--button-base-color-disabled);
+}
+
 button.primary {
     border: 1px solid var(--button-primary-outline);
     background-color: var(--button-primary-background);
     color: var(--button-primary-color);
+}
+
+button.primary.disabled {
+    background-color: var(--button-primary-disabled);
+    color: var(--button-primary-color-disabled);
 }
 
 button.secondary {
@@ -41,12 +51,16 @@ button.secondary {
     color: var(--button-secondary-color);
 }
 
+button.secondary.disabled {
+    background-color: var(--button-secondary-disabled);
+    color: var(--button-secondary-color-disabled);
+}
+
 button.active {
     box-shadow: 0px 0px 5px inset !important;
 }
 
 button.disabled {
-    opacity: 0.45 !important;
     cursor: default;
     pointer-events: none;
 }
