@@ -16,6 +16,7 @@ namespace Sanchez.DansUI.Configuration
             services.AddScoped<IPopperService, PopperService>();
             services.AddScoped<IModalService, ModalService>();
             services.AddScoped<IToastService, ToastService>();
+            services.AddScoped<ICommanderService, CommanderService>();
         }
 
         public static void AddDansUI(this IServiceCollection services, UITheme defaultTheme, bool isClientSide)
