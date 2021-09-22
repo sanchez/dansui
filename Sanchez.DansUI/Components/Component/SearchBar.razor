@@ -1,3 +1,7 @@
+@using Sanchez.DansUI.Components.Form
+
+@implements IControllableField
+
 <div class="container">
     <span class="fieldContainer">
         @if (Prefix != null)
@@ -5,7 +9,7 @@
             <span>@Prefix</span>
         }
 
-        <input type="text" @attributes=@AdditionalAttributes value=@Value @oninput=@HandleChange />
+        <input type="text" @ref=@field @attributes=@AdditionalAttributes value=@Value @oninput=@HandleChange />
 
         @if (Suffix != null)
         {
@@ -22,6 +26,9 @@
                 return ValueChanged.InvokeAsync(s);
         return Task.CompletedTask;
     }
+
+    ElementReference field;
+    public ElementReference Field => field;
 
     [Parameter]
     public string Value { get; set; }

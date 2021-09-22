@@ -6,7 +6,7 @@ DansUI.commander = (function () {
     self.listen = function (cb) {
         window.addEventListener("keypress", function (e) {
             if (e.shiftKey && e.key == "S") {
-                if (document.activeElement.tagName != "input") {
+                if (document.activeElement.tagName.toLowerCase() != "input") {
                     e.stopPropagation();
                     e.preventDefault();
                     cb.invokeMethodAsync("CommanderTriggered")

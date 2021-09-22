@@ -1,0 +1,62 @@
+﻿@using Microsoft.JSInterop
+@using Sanchez.DansUI.Components.Component
+@using Sanchez.DansUI.Components.Overlay
+@using System.Reactive.Subjects
+@using System.Reactive.Linq
+@using Sanchez.DansUI.Extensions
+
+@implements IModal<Command>
+@implements IDisposable
+
+@inject IJSRuntime JSRuntime
+@inject ICommanderService CommanderService
+
+<ModalFloating OnClose=@OnExit>
+    <SearchBar @ref=@containerRef @bind-Value=@searchValue />
+</ModalFloating>
+
+@code {
+    SearchBar containerRef;
+
+    BehaviorSubject<string> searchTerm = new("");
+    IDisposable searchTermDisposable;
+
+    string _searchValue = "";
+    string searchValue
+    {
+        get => _searchValue;
+        set
+        {
+            _searchValue = value;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        searchTermDisposable = searchTerm
+            .Throttle(TimeSpan.FromSeconds(1))
+            .Subscribe();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+            await JSRuntime.Focus(containerRef);
+    }
+
+    [Parameter]
+    public Action OnExit { get; set; }
+
+    [Parameter]
+    public Action<Command> OnCompleted { get; set; }
+
+    public void Dispose()
+    {
+        if (searchTermDisposable != null)
+            searchTermDisposable.Dispose();
+    }
+}

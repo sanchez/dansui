@@ -4,6 +4,8 @@
 @typeparam TValue
 @inherits InputBase<TValue>
 
+@implements IControllableField
+
 <div class="container">
     <label class="@CssClass">
         @if (Label != null)
@@ -17,7 +19,7 @@
                 <span>@Prefix</span>
             }
 
-            <input type="text" @attributes="@AdditionalAttributes" value="@CurrentValue" @oninput="HandleChange" />
+            <input type="text" @ref=@field @attributes="@AdditionalAttributes" value="@CurrentValue" @oninput="HandleChange" />
 
             @if (Suffix != null)
             {
@@ -55,6 +57,9 @@
             return false;
         }
     }
+
+    ElementReference field;
+    public ElementReference Field => field;
 
     [Parameter]
     public string Label { get; set; }
