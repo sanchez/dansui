@@ -21,6 +21,8 @@
     BehaviorSubject<string> searchTerm = new("");
     IDisposable searchTermDisposable;
 
+    ICollection<Command> commands = new List<Command>();
+
     string _searchValue = "";
     string searchValue
     {
@@ -36,8 +38,15 @@
         base.OnInitialized();
 
         searchTermDisposable = searchTerm
-            .Throttle(TimeSpan.FromSeconds(1))
-            .Subscribe();
+        .Throttle(TimeSpan.FromSeconds(1))
+        .Select(x => CommanderService.SearchCommands(x))
+        .SelectMany(async x =>
+        {
+            commands = x.ToList();
+            await InvokeAsync(StateHasChanged);
+            return System.Reactive.Unit.Default;
+        })
+        .Subscribe();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
