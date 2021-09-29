@@ -4,6 +4,10 @@
 @using Sanchez.DansUI.Components.Navbar
 @using Sanchez.DansUI.Components.Sidebar
 
+@implements IDisposable
+
+@inject ICommanderService CommandService
+
 <ToastDisplayAdapter />
 <ModalDisplayAdapter />
 <PopperDisplayAdapter />
@@ -101,5 +105,27 @@
         </SidebarItem>
     </StyledLink>
     ;
+    }
+
+    protected void ExampleCommand()
+    {
+        // do something eventually
+    }
+
+    IDisposable commandDisposes;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        commandDisposes = CommandService.RegisterCommands(new List<Command>()
+{
+new Command(IconType.SUNSET, "Something Cool", "This doesn't actually do anything at the moment, but it could",
+ExampleCommand)
+});
+    }
+
+    public void Dispose()
+    {
+        if (commandDisposes != null) commandDisposes.Dispose();
     }
 }

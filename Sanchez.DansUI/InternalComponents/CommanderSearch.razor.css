@@ -1,0 +1,42 @@
+.none-found {
+    padding: 18px;
+    text-align: center;
+}
+
+.found {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: stretch;
+    gap: 24px;
+}
+
+.command {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "icon name" "icon description";
+    gap: 8px;
+    justify-items: stretch;
+    align-items: start;
+    justify-content: center;
+    align-content: center;
+}
+
+.command-icon {
+    color: var(--primary);
+    align-self: center;
+    justify-self: center;
+
+    grid-area: icon;
+}
+
+.command-name {
+    grid-area: name;
+}
+
+.command-description {
+    grid-area: description;
+}

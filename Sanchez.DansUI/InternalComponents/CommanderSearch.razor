@@ -13,9 +13,31 @@
 
 <ModalFloating OnClose=@OnExit>
     <SearchBar @ref=@containerRef @bind-Value=@searchValue />
-</ModalFloating>
 
-@code {
+    @if (!commands.Any())
+    {
+        <div class="none-found">
+            <i>No Commands Found</i>
+        </div>
+    }
+    else
+    {
+        <div class="found">
+            @foreach (var command in commands)
+            {
+                <div class="command">
+                    <div class="command-icon">
+                        <Icon Type=command.Icon />
+                    </div>
+                    <div class="command-name">@command.Name</div>
+                    <div class="command-description">@command.Description</div>
+                </div>
+            }
+        </div>
+    }
+    </ModalFloating>
+
+    @code {
     SearchBar containerRef;
 
     BehaviorSubject<string> searchTerm = new("");
