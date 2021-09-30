@@ -32,6 +32,13 @@ namespace Sanchez.DansUI.Services
             _commandTriggerDisposable = _commandTrigger
                 .Select(x => modalService.Push<CommanderSearch, Command>())
                 .Switch()
+                .Do(x =>
+                {
+                    if (x.OnExecute != null)
+                    {
+                        x.OnExecute();
+                    }
+                })
                 .Subscribe();
         }
 

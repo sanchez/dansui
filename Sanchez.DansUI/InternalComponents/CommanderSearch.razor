@@ -25,7 +25,7 @@
         <div class="found">
             @foreach (var command in commands)
             {
-                <div class="command">
+                <div class="command" @onclick="@(() => TriggerCommand(command))">
                     <div class="command-icon">
                         <Icon Type=command.Icon />
                     </div>
@@ -69,6 +69,18 @@
             return System.Reactive.Unit.Default;
         })
         .Subscribe();
+    }
+
+    void TriggerCommand(Command command)
+    {
+        if (OnCompleted != null)
+        {
+            OnCompleted(command);
+        }
+        else
+        {
+            OnExit();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

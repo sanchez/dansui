@@ -10,7 +10,7 @@
     flex-wrap: nowrap;
     justify-content: start;
     align-items: stretch;
-    gap: 24px;
+    gap: 8px;
 }
 
 .command {
@@ -23,6 +23,19 @@
     align-items: start;
     justify-content: center;
     align-content: center;
+
+    cursor: pointer;
+
+    border-radius: 4px;
+
+    padding: 8px;
+
+    border: 2px solid var(--paper-background);
+    transition: border-color 0.3s;
+}
+
+.command:hover {
+    border-color: var(--primary);
 }
 
 .command-icon {
