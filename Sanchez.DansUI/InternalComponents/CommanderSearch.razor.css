@@ -3,6 +3,13 @@
     text-align: center;
 }
 
+.searching {
+    padding: 18px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--primary);
+}
+
 .found {
     padding: 18px;
     display: flex;

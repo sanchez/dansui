@@ -3,6 +3,9 @@
 @using Sanchez.DansUI.Components.App
 @using Sanchez.DansUI.Components.Navbar
 @using Sanchez.DansUI.Components.Sidebar
+@using Sanchez.DansUI.Runner.Blazor.Models
+
+@inject NavigationManager NavManager
 
 @implements IDisposable
 
@@ -34,35 +37,10 @@
             <SidebarItem>Layout</SidebarItem>
         </StyledLink>
 
-        @CreateSection(IconType.MONITOR, "Display")
-        @CreateLink(IconType.CREDIT_CARD, "/display/card", "Card")
-        @CreateLink(IconType.LAYOUT_GRID, "/display/grid", "Grid")
-        @CreateLink(IconType.TABLE, "/display/table", "Table")
-        @CreateLink(IconType.TABLE, "/display/reflectiontable", "Reflection Table")
-        @CreateLink(IconType.LIST_ORDERED, "/display/stepper", "Stepper")
-
-        @CreateSection(IconType.COMMAND, "Components")
-        @CreateLink(IconType.HASH, "/component/heading", "Heading")
-        @CreateLink(IconType.MOUSE_POINTER, "/component/button", "Button")
-        @CreateLink(IconType.SEARCH, "/component/search", "SearchBar")
-        @CreateLink(IconType.TYPE, "/component/textbar", "TextBar")
-        @CreateLink(IconType.SHIELD_ALERT, "/component/notification", "Notification")
-        @CreateLink(IconType.LOADER_2, "/component/loader", "Loader")
-        @CreateLink(IconType.FILE_INPUT, "/component/fileinput", "File Input")
-
-        @CreateSection(IconType.FORM_INPUT, "Form")
-        @CreateLink(IconType.FORM_INPUT, "/form/form", "Example Form")
-        @CreateLink(IconType.FORM_INPUT, "/form/dropdown", "Dropdown Form")
-
-        @CreateSection(IconType.BRUSH, "Drawing")
-        @CreateLink(IconType.THERMOMETER, "/drawing/value", "Value")
-
-        @CreateSection(IconType.AIRPLAY, "Overlay")
-        @CreateLink(IconType.ACTIVITY, "/overlay/popper", "Popper")
-        @CreateLink(IconType.SIDEBAR_CLOSE, "/overlay/modal", "Modal")
-        @CreateLink(IconType.BELL, "/overlay/toast", "Toast")
-        @CreateLink(IconType.DROPLET, "/overlay/dropover", "DropOver")
-        @CreateLink(IconType.DROPLETS, "/overlay/dropdown", "DropDown")
+        @foreach (var navItem in navItems)
+        {
+            @navItem.Nav
+        }
 
     </Sidebar>
 
@@ -81,9 +59,11 @@
         StateHasChanged();
     }
 
-    protected RenderFragment CreateSection(IconType icon, string title)
+    List<NavEntry> navItems = new();
+
+    void AddSection(IconType icon, string title)
     {
-        return
+        RenderFragment rFrag =
     @<SidebarSection>
         <IconContent>
             <Icon Type=@icon />
@@ -91,11 +71,13 @@
         <ChildContent>@title</ChildContent>
     </SidebarSection>
     ;
+
+        navItems.Add(new(rFrag, null, icon, $"Navigate to {title}"));
     }
 
-    protected RenderFragment CreateLink(IconType icon, string location, string title)
+    void AddLink(IconType icon, string location, string title)
     {
-        return
+        RenderFragment rFrag =
     @<StyledLink Href=@location>
         <SidebarItem>
             <IconContent>
@@ -105,6 +87,8 @@
         </SidebarItem>
     </StyledLink>
     ;
+
+        navItems.Add(new(rFrag, location, icon, $"Navigate to {title}"));
     }
 
     protected void ExampleCommand()
@@ -117,11 +101,42 @@
     {
         base.OnInitialized();
 
-        commandDisposes = CommandService.RegisterCommands(new List<Command>()
-{
-new Command(IconType.SUNSET, "Something Cool", "This doesn't actually do anything at the moment, but it could",
-ExampleCommand)
-});
+        AddSection(IconType.MONITOR, "Display");
+        AddLink(IconType.CREDIT_CARD, "/display/card", "Card");
+        AddLink(IconType.LAYOUT_GRID, "/display/grid", "Grid");
+        AddLink(IconType.TABLE, "/display/table", "Table");
+        AddLink(IconType.TABLE, "/display/reflectiontable", "Reflection Table");
+        AddLink(IconType.LIST_ORDERED, "/display/stepper", "Stepper");
+
+        AddSection(IconType.COMMAND, "Components");
+        AddLink(IconType.HASH, "/component/heading", "Heading");
+        AddLink(IconType.MOUSE_POINTER, "/component/button", "Button");
+        AddLink(IconType.SEARCH, "/component/search", "SearchBar");
+        AddLink(IconType.TYPE, "/component/textbar", "TextBar");
+        AddLink(IconType.SHIELD_ALERT, "/component/notification", "Notification");
+        AddLink(IconType.LOADER_2, "/component/loader", "Loader");
+        AddLink(IconType.FILE_INPUT, "/component/fileinput", "File Input");
+
+        AddSection(IconType.FORM_INPUT, "Form");
+        AddLink(IconType.FORM_INPUT, "/form/form", "Example Form");
+        AddLink(IconType.FORM_INPUT, "/form/dropdown", "Dropdown Form");
+
+        AddSection(IconType.BRUSH, "Drawing");
+        AddLink(IconType.THERMOMETER, "/drawing/value", "Value");
+
+        AddSection(IconType.AIRPLAY, "Overlay");
+        AddLink(IconType.ACTIVITY, "/overlay/popper", "Popper");
+        AddLink(IconType.SIDEBAR_CLOSE, "/overlay/modal", "Modal");
+        AddLink(IconType.BELL, "/overlay/toast", "Toast");
+        AddLink(IconType.DROPLET, "/overlay/dropover", "DropOver");
+        AddLink(IconType.DROPLETS, "/overlay/dropdown", "DropDown");
+
+        var totalCommands = new List<Command>();
+
+        var linkCommands = navItems.Select(x => new Command(x.Icon, x.Title, () => NavManager.NavigateTo(x.Url)));
+        totalCommands.AddRange(linkCommands);
+
+        commandDisposes = CommandService.RegisterCommands(totalCommands);
     }
 
     public void Dispose()

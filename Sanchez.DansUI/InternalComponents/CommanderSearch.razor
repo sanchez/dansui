@@ -14,7 +14,13 @@
 <ModalFloating OnClose=@OnExit>
     <SearchBar @ref=@containerRef @bind-Value=@searchValue />
 
-    @if (!commands.Any())
+    @if (isSearching)
+    {
+        <div class="searching">
+            <Icon Type="Icons.IconType.LOADER" />
+        </div>
+    }
+    else if (!commands.Any())
     {
         <div class="none-found">
             <i>No Commands Found</i>
@@ -37,10 +43,11 @@
     }
     </ModalFloating>
 
-    @code {
+@code {
     SearchBar containerRef;
 
     BehaviorSubject<string> searchTerm = new("");
+    bool isSearching = false;
     IDisposable searchTermDisposable;
 
     ICollection<Command> commands = new List<Command>();
@@ -52,6 +59,7 @@
         set
         {
             _searchValue = value;
+            searchTerm.OnNext(value);
         }
     }
 
@@ -60,15 +68,25 @@
         base.OnInitialized();
 
         searchTermDisposable = searchTerm
-        .Throttle(TimeSpan.FromSeconds(1))
-        .Select(x => CommanderService.SearchCommands(x))
-        .SelectMany(async x =>
-        {
-            commands = x.ToList();
-            await InvokeAsync(StateHasChanged);
-            return System.Reactive.Unit.Default;
-        })
-        .Subscribe();
+            .SelectMany(async x =>
+            {
+                if (!isSearching)
+                {
+                    isSearching = true;
+                    await InvokeAsync(StateHasChanged);
+                }
+                return x;
+            })
+            .Throttle(TimeSpan.FromSeconds(0.5))
+            .Select(x => CommanderService.SearchCommands(x))
+            .SelectMany(async x =>
+            {
+                commands = x.ToList();
+                isSearching = false;
+                await InvokeAsync(StateHasChanged);
+                return System.Reactive.Unit.Default;
+            })
+            .Subscribe();
     }
 
     void TriggerCommand(Command command)

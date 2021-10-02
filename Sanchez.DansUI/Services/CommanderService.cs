@@ -51,6 +51,7 @@ namespace Sanchez.DansUI.Services
         {
             return _commands
                 .Where(x => x.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
+                .Reverse()
                 .Take(5);
         }
 
