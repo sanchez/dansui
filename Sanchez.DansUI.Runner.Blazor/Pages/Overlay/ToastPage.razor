@@ -4,6 +4,7 @@
 @using System.Reactive
 
 @inject IToastService ToastService
+@inject ICommanderService CommandService
 
 @implements IDisposable
 
@@ -71,6 +72,21 @@ ToastService.Push(ToastSeverity.ERROR, "This is error", "Hello world from an err
         .Subscribe();
     }
 
+    IDisposable commandDisposes;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        commandDisposes = CommandService.RegisterCommands(new List<Command>()
+{
+new Command(IconType.BELL, "Chained Notification", "Trigger the chained notification", HandleToastNotification),
+new Command(IconType.BELL, "All Notifications", HandleToastAllNotifications)
+});
+    }
+
+
+
     public void Dispose()
     {
         if (previousToastNotification != null)
@@ -78,5 +94,8 @@ ToastService.Push(ToastSeverity.ERROR, "This is error", "Hello world from an err
 
         if (previousAllToastNotification != null)
             previousAllToastNotification.Dispose();
+
+        if (commandDisposes != null)
+            commandDisposes.Dispose();
     }
 }

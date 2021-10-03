@@ -1,5 +1,26 @@
 var DansUI = DansUI || {};
 
+DansUI.commander = (function () {
+    var self = {};
+
+    self.listen = function (cb) {
+        window.addEventListener("keypress", function (e) {
+            if (e.key === "/") {
+                if (document.activeElement.tagName.toLowerCase() != "input") {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    cb.invokeMethodAsync("CommanderTriggered")
+                        .catch(function (error) {
+                            console.error("Error triggering the commander", error);
+                        });
+                }
+            }
+        }, false);
+    }
+
+    return self;
+})();
+
 DansUI.controls = (function () {
     var self = {};
 

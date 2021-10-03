@@ -1,0 +1,134 @@
+﻿@using Microsoft.JSInterop
+@using Sanchez.DansUI.Components.Component
+@using Sanchez.DansUI.Components.Overlay
+@using System.Reactive.Subjects
+@using System.Reactive.Linq
+@using Sanchez.DansUI.Extensions
+
+@implements IModal<Command>
+@implements IDisposable
+
+@inject IJSRuntime JSRuntime
+@inject ICommanderService CommanderService
+
+<ModalFloating>
+    <form @onsubmit=@HandleSubmit>
+        <SearchBar @ref=@containerRef @bind-Value=@searchValue />
+    </form>
+
+    @if (isSearching)
+    {
+        <div class="searching">
+            <Icon Type="Icons.IconType.LOADER" />
+        </div>
+    }
+    else if (!commands.Any())
+    {
+        <div class="none-found">
+            <i>No Commands Found</i>
+        </div>
+    }
+    else
+    {
+        <div class="found">
+            @foreach (var command in commands)
+            {
+                <div class="command" @onclick="@(() => TriggerCommand(command))">
+                    <div class="command-icon">
+                        <Icon Type=command.Icon />
+                    </div>
+                    <div class="command-name">@command.Name</div>
+                    <div class="command-description">@command.Description</div>
+                </div>
+            }
+        </div>
+    }
+    </ModalFloating>
+
+@code {
+    SearchBar containerRef;
+
+    BehaviorSubject<string> searchTerm = new("");
+    bool isSearching = false;
+    IDisposable searchTermDisposable;
+
+    ICollection<Command> commands = new List<Command>();
+
+    string _searchValue = "";
+    string searchValue
+    {
+        get => _searchValue;
+        set
+        {
+            _searchValue = value;
+            searchTerm.OnNext(value);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        searchTermDisposable = searchTerm
+            .SelectMany(async x =>
+            {
+                if (!isSearching)
+                {
+                    isSearching = true;
+                    await InvokeAsync(StateHasChanged);
+                }
+                return x;
+            })
+            .Throttle(TimeSpan.FromSeconds(0.5))
+            .Select(x => CommanderService.SearchCommands(x))
+            .SelectMany(async x =>
+            {
+                commands = x.ToList();
+                isSearching = false;
+                await InvokeAsync(StateHasChanged);
+                return System.Reactive.Unit.Default;
+            })
+            .Subscribe();
+    }
+
+    void TriggerCommand(Command command)
+    {
+        if (OnCompleted != null)
+        {
+            OnCompleted(command);
+        }
+        else
+        {
+            OnExit();
+        }
+    }
+
+    void HandleSubmit()
+    {
+        var first = commands.FirstOrDefault();
+        if (first != null)
+        {
+            TriggerCommand(first);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+            await JSRuntime.Focus(containerRef);
+    }
+
+    [Parameter]
+    public Action OnExit { get; set; }
+
+    [Parameter]
+    public Action<Command> OnCompleted { get; set; }
+
+    public void Dispose()
+    {
+        if (searchTermDisposable != null)
+            searchTermDisposable.Dispose();
+    }
+}

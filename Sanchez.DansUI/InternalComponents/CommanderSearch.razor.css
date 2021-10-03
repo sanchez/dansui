@@ -1,0 +1,62 @@
+.none-found {
+    padding: 18px;
+    text-align: center;
+}
+
+.searching {
+    padding: 18px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--primary);
+}
+
+.found {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.command {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "icon name" "icon description";
+    gap: 8px;
+    justify-items: stretch;
+    align-items: start;
+    justify-content: center;
+    align-content: center;
+
+    cursor: pointer;
+
+    border-radius: 4px;
+
+    padding: 8px;
+
+    border: 2px solid var(--paper-background);
+    transition: border-color 0.3s;
+}
+
+.command:hover {
+    border-color: var(--primary);
+}
+
+.command-icon {
+    color: var(--primary);
+    align-self: center;
+    justify-self: center;
+
+    grid-area: icon;
+}
+
+.command-name {
+    grid-area: name;
+}
+
+.command-description {
+    grid-area: description;
+}
