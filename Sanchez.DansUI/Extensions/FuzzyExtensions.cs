@@ -27,18 +27,21 @@ namespace Sanchez.DansUI.Extensions
             if (b.Length == 0)
                 return a.Length;
 
-            var d = new int[a.Length + 1, b.Length + 1];
+            var lowerA = a.ToLower();
+            var lowerB = b.ToLower();
 
-            for (var i = 0; i <= a.Length; i++)
+            var d = new int[lowerA.Length + 1, lowerB.Length + 1];
+
+            for (var i = 0; i <= lowerA.Length; i++)
                 d[i, 0] = i;
-            for (var i = 0; i <= b.Length; i++)
+            for (var i = 0; i <= lowerB.Length; i++)
                 d[0, i] = i;
 
-            for (var i = 1; i <= a.Length; i++)
+            for (var i = 1; i <= lowerA.Length; i++)
             {
-                for (var j = 1; j <= b.Length; j++)
+                for (var j = 1; j <= lowerB.Length; j++)
                 {
-                    var cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
+                    var cost = (lowerA[i - 1] == lowerB[j - 1]) ? 0 : 1;
                     d[i, j] = Min(
                         d[i - 1, j] + 1,
                         d[i, j - 1] + 1,
@@ -47,7 +50,7 @@ namespace Sanchez.DansUI.Extensions
                 }
             }
 
-            return d[a.Length, b.Length];
+            return d[lowerA.Length, lowerB.Length];
         }
     }
 }
