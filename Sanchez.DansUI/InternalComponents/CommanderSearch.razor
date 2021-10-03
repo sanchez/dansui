@@ -11,8 +11,10 @@
 @inject IJSRuntime JSRuntime
 @inject ICommanderService CommanderService
 
-<ModalFloating OnClose=@OnExit>
-    <SearchBar @ref=@containerRef @bind-Value=@searchValue />
+<ModalFloating>
+    <form @onsubmit=@HandleSubmit>
+        <SearchBar @ref=@containerRef @bind-Value=@searchValue />
+    </form>
 
     @if (isSearching)
     {
@@ -98,6 +100,15 @@
         else
         {
             OnExit();
+        }
+    }
+
+    void HandleSubmit()
+    {
+        var first = commands.FirstOrDefault();
+        if (first != null)
+        {
+            TriggerCommand(first);
         }
     }
 
