@@ -133,7 +133,10 @@
 
         var totalCommands = new List<Command>();
 
-        var linkCommands = navItems.Select(x => new Command(x.Icon, x.Title, () => NavManager.NavigateTo(x.Url)));
+        var linkCommands =
+        navItems
+        .Where(x => x.Url != null)
+        .Select(x => new Command(x.Icon, x.Title, () => NavManager.NavigateTo(x.Url)));
         totalCommands.AddRange(linkCommands);
 
         commandDisposes = CommandService.RegisterCommands(totalCommands);

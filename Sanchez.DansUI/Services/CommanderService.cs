@@ -1,6 +1,7 @@
 ﻿using Microsoft.JSInterop;
 
 using Sanchez.DansUI.Components.Overlay;
+using Sanchez.DansUI.Extensions;
 using Sanchez.DansUI.InternalComponents;
 
 using System;
@@ -50,9 +51,10 @@ namespace Sanchez.DansUI.Services
         public IEnumerable<Command> SearchCommands(string name)
         {
             return _commands
-                .Where(x => x.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
-                .Reverse()
-                .Take(5);
+                .Select(x => (Rating: x.Name.LevenshteinDistance(name), Command: x))
+                .OrderBy(x => x.Rating)
+                .Take(5)
+                .Select(x => x.Command);
         }
 
         public IDisposable RegisterCommand(Command command)
