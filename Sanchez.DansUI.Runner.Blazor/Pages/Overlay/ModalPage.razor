@@ -14,14 +14,7 @@
 </div>
 
 <div>
-    <Button @onclick=@HandleCreateModal>
-        <ChildContent>
-            Create Modal
-        </ChildContent>
-        <Suffix>
-            <Icon Type="IconType.EXTERNAL_LINK" />
-        </Suffix>
-    </Button>
+    <CommanderButton Icon="IconType.EXTERNAL_LINK" Title="Create Modal" Description="Creates an example Modal" OnExecute="HandleCreateModal" />
 </div>
 
 @code {

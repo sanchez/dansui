@@ -1,0 +1,54 @@
+﻿@using Sanchez.DansUI.Icons
+@using Sanchez.DansUI.Components.Overlay
+
+@implements IDisposable
+
+@inject ICommanderService CommandService
+
+<Button IsPrimary=@IsPrimary IsSecondary=@IsSecondary @onclick=OnExecute>
+	<Prefix>
+		<Icon Type=@Icon />
+	</Prefix>
+	<ChildContent>
+		@buttonLabel
+	</ChildContent>
+</Button>
+
+@code {
+	string buttonLabel => ButtonLabel ?? Title;
+	IDisposable buttonCommand;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		buttonCommand = CommandService.RegisterCommand(new Command(Icon, Title, Description, OnExecute));
+	}
+
+	[Parameter]
+	public IconType Icon { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
+	public string ButtonLabel { get; set; }
+
+	[Parameter]
+	public string Description { get; set; }
+
+	[Parameter]
+	public bool IsPrimary { get; set; } = true;
+
+	[Parameter]
+	public bool IsSecondary { get; set; } = false;
+
+	[Parameter]
+	public Action OnExecute { get; set; }
+
+	public void Dispose()
+	{
+		if (buttonCommand != null)
+			buttonCommand.Dispose();
+	}
+}
