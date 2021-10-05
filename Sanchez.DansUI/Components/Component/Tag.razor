@@ -1,0 +1,34 @@
+@using System.Drawing
+@using Sanchez.DansUI.Extensions
+
+<div class="tag" style="@computedStyle">
+    @if (Prefix != null)
+    {
+        <div>@Prefix</div>
+    }
+
+    <div>@ChildContent</div>
+
+    @if (Suffix != null)
+    {
+        <div>@Suffix</div>
+    }
+</div>
+
+@code {
+    string backgroundColor => Color.Darken(0.4f).SetOpacity(0.2f).ToHexString();
+    string foregroundColor => Color.ToHexString();
+    string computedStyle => $"color: {foregroundColor}; background-color: {backgroundColor}; border-color: {foregroundColor}";
+
+    [Parameter]
+    public Color Color {get;set;}
+
+    [Parameter]
+    public RenderFragment Prefix { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment Suffix { get; set; }
+}
