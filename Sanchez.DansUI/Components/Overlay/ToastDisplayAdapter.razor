@@ -51,10 +51,11 @@
         base.OnInitialized();
 
         toastSubscription = ToastService.DisplayStack()
-        .Do(x =>
+        .SelectMany(async x =>
         {
             _currentToast = x?.ToList();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+            return x;
         })
         .Subscribe();
     }
