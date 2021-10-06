@@ -13,4 +13,11 @@
     border-radius: 5px;
     border-width: 2px;
     border-style: solid;
+
+    font-size: 0.8em;
+}
+
+::deep svg {
+    height: 17px;
+    width: 17px;
 }

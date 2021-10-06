@@ -2,33 +2,28 @@
 @using Sanchez.DansUI.Extensions
 
 <div class="tag" style="@computedStyle">
-    @if (Prefix != null)
-    {
-        <div>@Prefix</div>
-    }
-
-    <div>@ChildContent</div>
-
-    @if (Suffix != null)
-    {
-        <div>@Suffix</div>
-    }
+    <div class="scope" style="@scopeStyle">
+        @Scope
+    </div>
+    <div class="content">
+        @Content
+    </div>
 </div>
 
 @code {
     string backgroundColor => Color.Darken(0.2f).SetOpacity(0.2f).ToHexString();
     string foregroundColor => Color.ToHexString();
+    string scopeColor => Color.GetTextColoring().ToHexString();
+
     string computedStyle => $"color: {foregroundColor}; background-color: {backgroundColor}; border-color: {foregroundColor}";
+    string scopeStyle => $"color: {scopeColor}; background-color: {foregroundColor}";
 
     [Parameter]
     public Color Color { get; set; }
 
     [Parameter]
-    public RenderFragment Prefix { get; set; }
+    public RenderFragment Scope { get;set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
-
-    [Parameter]
-    public RenderFragment Suffix { get; set; }
+    public RenderFragment Content { get; set; }
 }
