@@ -1,17 +1,16 @@
 ﻿<div class="container">
-    @if (TitlePicture != null)
+    @if (TitlePicture != null && ShowTitlePicture)
     {
         <div class="picture">
             @TitlePicture
         </div>
     }
-    @if (ChildContent != null)
-    {
-        <div class="content">
-            @ChildContent
-        </div>
-    }
-    @if (FooterContent != null)
+
+    <div class="content">
+        @ChildContent
+    </div>
+
+    @if (FooterContent != null && ShowFooterContent)
     {
         <div class="footer">
             @FooterContent
@@ -24,7 +23,13 @@
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
+    public bool ShowTitlePicture { get; set; } = true;
+
+    [Parameter]
     public RenderFragment TitlePicture { get; set; }
+
+    [Parameter]
+    public bool ShowFooterContent { get; set; } = true;
 
     [Parameter]
     public RenderFragment FooterContent { get; set; }
