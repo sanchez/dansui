@@ -35,6 +35,7 @@
                         builder.OpenComponent(0, x.Type);
                         builder.AddAttribute(1, nameof(IModal<object>.OnCompleted), x.OnCompleted);
                         builder.AddAttribute(2, nameof(IModal<object>.OnExit), x.OnClosed);
+                        builder.AddAttribute(3, nameof(IModal<object>.Parameters), x.Parameters);
                         builder.CloseComponent();
                     };
                 }

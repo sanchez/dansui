@@ -3,6 +3,7 @@ using Sanchez.DansUI.Models;
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -43,7 +44,7 @@ namespace Sanchez.DansUI.Services
             return _currentModal;
         }
 
-        public IObservable<TRes> Push<T, TRes>()
+        public IObservable<TRes> Push<T, TRes>(IDictionary<string, object> parameters = null)
             where T : IModal<TRes>
             where TRes : class
         {
@@ -75,6 +76,7 @@ namespace Sanchez.DansUI.Services
                 {
                     Id = frameId,
                     Type = typeof(T),
+                    Parameters = parameters ?? new Dictionary<string, object>(),
                     OnCompleted = handleCompleted,
                     OnClosed = handleExit
                 };
