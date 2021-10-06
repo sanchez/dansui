@@ -121,6 +121,9 @@
     }
 
     [Parameter]
+    public IDictionary<string, object> Parameters { get; set; }
+
+    [Parameter]
     public Action OnExit { get; set; }
 
     [Parameter]
