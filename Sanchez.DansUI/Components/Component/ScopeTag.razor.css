@@ -1,0 +1,27 @@
+.tag, .scope, .content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.tag {
+    border-radius: 5px;
+    border-width: 2px;
+    border-style: solid;
+
+    font-size: 0.8em;
+}
+
+.scope, .content {
+    padding: 5px 12px;
+    gap: 12px;
+}
+
+::deep svg {
+    height: 17px;
+    width: 17px;
+}
