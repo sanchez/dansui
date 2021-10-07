@@ -35,13 +35,13 @@
 
                 <TableCell ShowPrefix="@(header.CellPrefix != null)" ShowSuffix="@(header.CellSuffix != null)">
                     <Prefix>
-                        @header.RenderedCellPrefix
+                        @header.RenderCellPrefix(item)
                     </Prefix>
                     <ChildContent>
                         @header.Selector(item)
                     </ChildContent>
                     <Suffix>
-                        @header.RenderedCellSuffix
+                        @header.RenderCellSuffix(item)
                     </Suffix>
                 </TableCell>
             }

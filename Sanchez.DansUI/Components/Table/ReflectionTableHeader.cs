@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+
 using System;
 
 namespace Sanchez.DansUI.Components.Table
@@ -11,17 +12,25 @@ namespace Sanchez.DansUI.Components.Table
         public string SortSelector { get; set; }
 
         public Type CellPrefix { get; set; }
-        public RenderFragment RenderedCellPrefix => builder =>
+        public RenderFragment RenderCellPrefix(T item)
         {
-            builder.OpenComponent(0, CellPrefix);
-            builder.CloseComponent();
-        };
+            return builder =>
+            {
+                builder.OpenComponent(0, CellPrefix);
+                builder.AddAttribute(1, nameof(ITableCellExtension<T>.Item), item);
+                builder.CloseComponent();
+            };
+        }
 
         public Type CellSuffix { get; set; }
-        public RenderFragment RenderedCellSuffix => builder =>
+        public RenderFragment RenderCellSuffix(T item)
         {
-            builder.OpenComponent(0, CellSuffix);
-            builder.CloseComponent();
-        };
+            return builder =>
+            {
+                builder.OpenComponent(0, CellSuffix);
+                builder.AddAttribute(1, nameof(ITableCellExtension<T>.Item), item);
+                builder.CloseComponent();
+            };
+        }
     }
 }

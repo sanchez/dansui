@@ -1,1 +1,10 @@
+@using Sanchez.DansUI.Runner.Blazor.Models
+
+@implements ITableCellExtension<RegisteredPerson>
+
 <Icon Type="IconType.TRASH" />
+
+@code {
+	[Parameter]
+	public RegisteredPerson Item { get; set; }
+}

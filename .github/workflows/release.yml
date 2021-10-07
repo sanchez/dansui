@@ -15,14 +15,14 @@ jobs:
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Build
-      run: dotnet build --configuration Release /p:Version=${VERSION}
+      run: dotnet build --configuration Debug /p:Version=${VERSION}
     - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} --no-build
+      run: dotnet test --configuration Debug /p:Version=${VERSION} --no-build
 
     - name: Pack 
       run: |
-        dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output . Sanchez.DansUI.Icons
-        dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output . Sanchez.DansUI
+        dotnet pack --configuration Debug /p:Version=${VERSION} --no-build --output . Sanchez.DansUI.Icons
+        dotnet pack --configuration Debug /p:Version=${VERSION} --no-build --output . Sanchez.DansUI
 
     - name: Push
       run: |
