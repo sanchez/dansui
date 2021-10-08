@@ -30,7 +30,7 @@
 
     protected void OnDataUpdate(object sender, object args)
     {
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
     }
 
     protected override void OnParametersSet()
