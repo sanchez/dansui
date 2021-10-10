@@ -1,4 +1,4 @@
-@page "/display/table"
+@page "/display/datatable"
 
 @using DynamicData
 @using DynamicData.Binding
@@ -16,7 +16,7 @@
 <Slimmer>
     <Card>
         <h3>Registered People</h3>
-        <Table Items="people" Context="person">
+        <DataTable Items="people" Context="person">
             <Header>
                 <TableHeader>Id</TableHeader>
                 <TableHeader>
@@ -56,7 +56,7 @@
                 <TableCell CenterAlign="@true">@person.Age</TableCell>
                 <TableCell RightAlign="@true">@person.PostCode</TableCell>
             </RowTemplate>
-        </Table>
+        </DataTable>
         <TablePager PageController="@pageController" />
     </Card>
 </Slimmer>
@@ -65,7 +65,7 @@
 
 <Card>
     <h3>Registered People</h3>
-    <Table Items="people" Context="person" ShouldOverflow="@false">
+    <DataTable Items="people" Context="person" ShouldOverflow="@false">
         <Header>
             <TableHeader>Id</TableHeader>
             <TableHeader>
@@ -105,14 +105,14 @@
             <TableCell CenterAlign="@true">@person.Age</TableCell>
             <TableCell RightAlign="@true">@person.PostCode</TableCell>
         </RowTemplate>
-    </Table>
+    </DataTable>
     <TablePager PageController="@pageController" />
 </Card>
 
 <h2>Table without Card</h2>
 
 <Slimmer>
-    <Table Items="people" Context="person">
+    <DataTable Items="people" Context="person">
         <Header>
             <TableHeader>
                 <ChildContent>FirstName</ChildContent>
@@ -136,7 +136,7 @@
             </TableCell>
             <TableCell>@person.LastName</TableCell>
         </RowTemplate>
-    </Table>
+    </DataTable>
     <TablePager PageController="@pageController" />
 </Slimmer>
 

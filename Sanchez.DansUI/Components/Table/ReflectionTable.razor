@@ -12,7 +12,7 @@
 @typeparam TItemKey
 
 <div>
-    <Table Items="@resData" Context="item">
+    <DataTable Items="@resData" Context="item">
         <Header>
             @foreach (var header in LoadHeaders())
             {
@@ -46,7 +46,7 @@
                 </TableCell>
             }
         </RowTemplate>
-    </Table>
+    </DataTable>
     <TablePager PageController=@pageController />
 </div>
 
