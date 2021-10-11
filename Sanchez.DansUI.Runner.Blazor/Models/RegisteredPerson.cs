@@ -100,5 +100,12 @@ namespace Sanchez.DansUI.Runner.Blazor.Models
 
             return source;
         }
+
+        public static ICollection<RegisteredPerson> GeneratePeopleList(int count)
+        {
+            var people = Enumerable.Range(0, count).Select(x => CreateRandom()).ToList();
+
+            return people;
+        }
     }
 }

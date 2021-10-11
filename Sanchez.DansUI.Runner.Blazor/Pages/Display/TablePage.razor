@@ -1,0 +1,23 @@
+@page "/display/table"
+
+@using Sanchez.DansUI.Runner.Blazor.Models
+
+<h1>Basic Table</h1>
+<h2>Slimmed Table</h2>
+
+<Slimmer>
+    <Card>
+        <h3>Registered People</h3>
+    </Card>
+</Slimmer>
+
+@code {
+    protected ICollection<RegisteredPerson> people;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        people = RegisteredPerson.GeneratePeopleList(100);
+    }
+}
