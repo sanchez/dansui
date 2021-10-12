@@ -1,6 +1,22 @@
 @using BlazorComponentUtilities
 @typeparam TItem
 
+<CascadingValue Name="@nameof(TableConfig)" Value=tableConfig>
+    <div class="@tableContainer">
+        <table class="@tableClass">
+            <thead>
+                <tr>@Header</tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Items)
+                {
+                    <tr>@RowTemplate(item)</tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</CascadingValue>
+
 @code {
     string tableClass;
     TableConfig tableConfig = new TableConfig();
@@ -20,13 +36,16 @@
     }
 
     [Parameter]
-    public bool ShouldOverflow { get; set; }
+    public bool ShouldOverflow { get; set; } = true;
 
     [Parameter]
-    public bool ShowBorders { get; set; }
+    public bool ShowBorders { get; set; } = true;
 
     [Parameter]
-    public bool AlternateRowColors { get; set; }
+    public bool AlternateRowColors { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment Header { get; set; }
 
     [Parameter]
     public RenderFragment<TItem> RowTemplate { get; set; }

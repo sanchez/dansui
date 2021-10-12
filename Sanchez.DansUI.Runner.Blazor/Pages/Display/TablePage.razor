@@ -8,6 +8,30 @@
 <Slimmer>
     <Card>
         <h3>Registered People</h3>
+        <Table Items="people" Context="person">
+            <Header>
+                <TableHeader>Id</TableHeader>
+                <TableHeader>FirstName</TableHeader>
+                <TableHeader>LastName</TableHeader>
+                <TableHeader>Age</TableHeader>
+                <TableHeader>PostCode</TableHeader>
+            </Header>
+            <RowTemplate>
+                <TableCell>@person.Id</TableCell>
+                <TableCell>
+                    <Prefix>
+                        <Icon Type="IconType.AXE" />
+                    </Prefix>
+                    <ChildContent>@person.FirstName</ChildContent>
+                    <Suffix>
+                        <Icon Type="IconType.EDIT" />
+                    </Suffix>
+                </TableCell>
+                <TableCell>@person.LastName</TableCell>
+                <TableCell CenterAlign="@true">@person.Age</TableCell>
+                <TableCell RightAlign="@true">@person.PostCode</TableCell>
+            </RowTemplate>
+        </Table>
     </Card>
 </Slimmer>
 
