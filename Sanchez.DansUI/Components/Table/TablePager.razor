@@ -30,20 +30,24 @@
 </div>
 
 @code {
-    private IDisposable lastSubscribe;
+    IDisposable lastSubscribe;
 
     [Parameter]
-    public PageController PageController { get; set; }
+    public IPageController PageController { get; set; }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
         if (lastSubscribe != null) lastSubscribe.Dispose();
-        lastSubscribe = PageController
+
+        lastSubscribe = Observable.Merge(
+        PageController.ListenCurrentPage(),
+        PageController.ListenMaxPage()
+        )
         .Do(x =>
         {
-            StateHasChanged();
+            InvokeAsync(StateHasChanged);
         })
         .Subscribe();
     }
@@ -52,26 +56,24 @@
     {
         return Enumerable
         .Range(PageController.CurrentPage - stepSize, stepSize * 2 + 1)
-        .Where(x => x > 0 && (PageController.MaxPages == -1 || x <= PageController.MaxPages))
+        .Where(x => x > 0 && (PageController.MaxPage == -1 || x <= PageController.MaxPage))
         .Select(x => (x, x == PageController.CurrentPage))
         .ToList();
     }
 
     protected void SetPage(int newPage)
     {
-        PageController.CurrentPage = newPage;
+        PageController.SetPage(newPage);
     }
 
     protected void HandlePrev()
     {
-        if (PageController.CurrentPage <= 1) return;
-        PageController.CurrentPage -= 1;
+        PageController.SetPage(PageController.CurrentPage - 1);
     }
 
     protected void HandleNext()
     {
-        if (PageController.MaxPages != -1 && PageController.CurrentPage < PageController.MaxPages)
-            PageController.CurrentPage += 1;
+        PageController.SetPage(PageController.CurrentPage + 1);
     }
 
     public void Dispose()

@@ -12,42 +12,42 @@
 @typeparam TItemKey
 
 <div>
-    <DataTable Items="@resData" Context="item">
+    @* <DataTable Items="@resData" Context="item">
         <Header>
-            @foreach (var header in LoadHeaders())
-            {
-                @if (header.IsVisible == false) continue;
+        @foreach (var header in LoadHeaders())
+        {
+        @if (header.IsVisible == false) continue;
 
-                <TableHeader ShowSortContent="@(header.SortSelector != null)">
-                    <ChildContent>
-                        @header.Name
-                    </ChildContent>
-                    <SortContent>
-                        <TableHeaderSorter SortController=@sortController Name=@header.SortSelector />
-                    </SortContent>
-                </TableHeader>
-            }
+        <TableHeader ShowSortContent="@(header.SortSelector != null)">
+        <ChildContent>
+        @header.Name
+        </ChildContent>
+        <SortContent>
+        <TableHeaderSorter SortController=@sortController Name=@header.SortSelector />
+        </SortContent>
+        </TableHeader>
+        }
         </Header>
         <RowTemplate>
-            @foreach (var header in LoadHeaders())
-            {
-                @if (header.IsVisible == false) continue;
+        @foreach (var header in LoadHeaders())
+        {
+        @if (header.IsVisible == false) continue;
 
-                <TableCell ShowPrefix="@(header.CellPrefix != null)" ShowSuffix="@(header.CellSuffix != null)">
-                    <Prefix>
-                        @header.RenderCellPrefix(item)
-                    </Prefix>
-                    <ChildContent>
-                        @header.Selector(item)
-                    </ChildContent>
-                    <Suffix>
-                        @header.RenderCellSuffix(item)
-                    </Suffix>
-                </TableCell>
-            }
+        <TableCell ShowPrefix="@(header.CellPrefix != null)" ShowSuffix="@(header.CellSuffix != null)">
+        <Prefix>
+        @header.RenderCellPrefix(item)
+        </Prefix>
+        <ChildContent>
+        @header.Selector(item)
+        </ChildContent>
+        <Suffix>
+        @header.RenderCellSuffix(item)
+        </Suffix>
+        </TableCell>
+        }
         </RowTemplate>
-    </DataTable>
-    <TablePager PageController=@pageController />
+        </DataTable>
+        <TablePager PageController=@pageController /> *@
 </div>
 
 @code {
