@@ -1,4 +1,7 @@
 @using BlazorComponentUtilities
+@using Sanchez.DansUI.Controllers
+@using System.Reactive.Linq
+
 @typeparam TItem
 
 <CascadingValue Name="@nameof(TableConfig)" Value=tableConfig>
@@ -8,7 +11,7 @@
                 <tr>@Header</tr>
             </thead>
             <tbody>
-                @foreach (var item in Items)
+                @foreach (var item in ProcessedItems)
                 {
                     <tr>@RowTemplate(item)</tr>
                 }
@@ -18,9 +21,23 @@
 </CascadingValue>
 
 @code {
+    IDisposable tablePageListener;
+
     string tableClass;
     TableConfig tableConfig = new TableConfig();
     string tableContainer => ShouldOverflow ? "container should-overflow" : "container";
+
+    IEnumerable<TItem> ProcessedItems
+    {
+        get
+        {
+            IEnumerable<TItem> items = Items;
+            if (PageController != null)
+                items = PageController.PageContent(items.ToList());
+
+            return items;
+        }
+    }
 
     protected override void OnParametersSet()
     {
@@ -33,6 +50,21 @@
         .AddClass("show-borders", when: tableConfig.ShowBorders)
         .AddClass("alt-rows", when: tableConfig.AltRowColors)
         .Build();
+
+        if (tablePageListener != null) tablePageListener.Dispose();
+        if (PageController != null)
+        {
+            tablePageListener =
+            Observable.Merge(
+            PageController.ListenMaxPage(),
+            PageController.ListenCurrentPage()
+            )
+            .Do(x =>
+            {
+                InvokeAsync(StateHasChanged);
+            })
+            .Subscribe();
+        }
     }
 
     [Parameter]
@@ -52,4 +84,7 @@
 
     [Parameter]
     public ICollection<TItem> Items { get; set; }
+
+    [Parameter]
+    public IPageController<TItem> PageController { get; set; }
 }
