@@ -56,7 +56,7 @@
 
     protected SortController<TItem> sortController = null;
 
-    protected PageController pageController = new(10);
+    protected PageController<object> pageController = new(10);
 
     protected ICollection<ReflectionTableHeader<TItem>> LoadHeaders()
     {
@@ -116,13 +116,6 @@
         base.OnParametersSet();
 
         if (resData != null) dataLoader.Dispose();
-
-        dataLoader = Data.Connect()
-        .BindSortController(sortController)
-        .BindPageController(pageController)
-        .Bind(out resData)
-        .DisposeMany()
-        .Subscribe();
     }
 
     [Parameter]
