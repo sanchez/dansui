@@ -45,6 +45,7 @@
         PageController.ListenCurrentPage(),
         PageController.ListenMaxPage()
         )
+        .Throttle(TimeSpan.FromMilliseconds(10))
         .Do(x =>
         {
             InvokeAsync(StateHasChanged);

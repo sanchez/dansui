@@ -1,9 +1,8 @@
-﻿using DynamicData;
-using System;
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Sanchez.DansUI.Controllers
 {
@@ -70,7 +69,9 @@ namespace Sanchez.DansUI.Controllers
             if (numPages != _maxPage.Value)
                 _maxPage.OnNext(numPages);
 
-            if (_currentPage.Value > _maxPage.Value)
+            if (_currentPage.Value == -1)
+                _currentPage.OnNext(1);
+            else if (_currentPage.Value > _maxPage.Value)
                 _currentPage.OnNext(_maxPage.Value);
 
             var skip = (_currentPage.Value - 1) * _itemsPerPage;

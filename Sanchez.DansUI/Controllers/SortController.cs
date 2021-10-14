@@ -1,26 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using DynamicData;
 
 namespace Sanchez.DansUI.Controllers
 {
-    public static class SortControllerExtensions
-    {
-        public static IObservable<IChangeSet<T>> BindSortController<T>(this IObservable<IChangeSet<T>> source, SortController<T> sortController)
-        {
-            return source
-                .Sort(sortController.Select(x => x.Comparer));
-        }
-
-        public static IObservable<ISortedChangeSet<T, TKey>> BindSortController<T, TKey>(this IObservable<IChangeSet<T, TKey>> source, SortController<T> sortController) where TKey : notnull
-        {
-            return source
-                .Sort(sortController.Select(x => x.Comparer));
-        }
-    }
-
     public class SortController<T> : IObservable<SortAction<T>>, IDisposable
     {
         protected SortAction<T> _lastValue;
