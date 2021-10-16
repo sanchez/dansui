@@ -1,49 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Subjects;
 
 namespace Sanchez.DansUI.Controllers
 {
-    public class SortController<T> : IObservable<SortAction<T>>, IDisposable
+    public interface ISortController<T> : IDisposable
     {
-        protected SortAction<T> _lastValue;
-        protected BehaviorSubject<SortAction<T>> _subject;
+        SortAlgorithm<T> CurrentAlgorithm { get; }
+        IObservable<SortAlgorithm<T>> ListenCurrentAlgorithm();
 
-        public SortController(SortAction<T> initialComparer)
+        void SetAlgorithm(SortAlgorithm<T> algo);
+
+        ICollection<T> SortContent(ICollection<T> items);
+    }
+
+    public class SortComparer<T> : IComparer<T>
+    {
+        protected readonly bool _isDescending;
+        protected readonly Func<T, IComparable> _comparer;
+
+        public SortComparer(bool isDescending, Func<T, IComparable> comparer)
         {
-            _subject = new(initialComparer);
-            _lastValue = initialComparer;
+            _isDescending = isDescending;
+            _comparer = comparer;
         }
 
-        public SortController(string key, bool wasDescending, IComparer<T> comparer)
+        int CompareNoDirection(T? x, T? y)
         {
-            var action = new SortAction<T>()
-            {
-                Comparer = comparer,
-                PropertyName = key,
-                WasDescending = wasDescending
-            };
+            if (x == null && y == null) return 0;
+            if (x == null) return -1;
+            if (y == null) return 1;
 
-            _subject = new(action);
-            _lastValue = action;
+            var xItem = _comparer(x);
+            var yItem = _comparer(y);
+
+            if (xItem == null && yItem == null) return 0;
+            if (xItem == null) return -1;
+            if (yItem == null) return 1;
+
+            return xItem.CompareTo(yItem);
         }
 
-        public void Emit(SortAction<T> newComparer)
+        public int Compare(T? x, T? y)
         {
-            _lastValue = newComparer;
-            _subject.OnNext(newComparer);
+            var res = CompareNoDirection(x, y);
+
+            if (_isDescending)
+                return res * -1;
+            return res;
+        }
+    }
+
+    public class SortAlgorithm<T>
+    {
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public bool IsDescending { get; set; }
+        public Comparison<T> Comparer { get; set; }
+
+        public SortAlgorithm() { }
+        public SortAlgorithm(string name, bool isDescending, Func<T, IComparable> selector)
+        {
+            Key = name;
+            Name = name;
+            IsDescending = isDescending;
+            Comparer = new SortComparer<T>(isDescending, selector).Compare;
+        }
+    }
+
+    public class SortController<T> : ISortController<T>
+    {
+        protected BehaviorSubject<SortAlgorithm<T>> _currentAlgorithm;
+
+        public SortController(SortAlgorithm<T> initialSort)
+        {
+            _currentAlgorithm = new(initialSort);
         }
 
-        public SortAction<T> LastValue => _lastValue;
+        public SortController() : this(null) { }
 
-        public IDisposable Subscribe(IObserver<SortAction<T>> observer)
+        public ICollection<T> SortContent(ICollection<T> items)
         {
-            return _subject.Subscribe(observer);
+            if (_currentAlgorithm.Value == null) return items;
+
+            var listItems = items.ToList();
+            listItems.Sort(_currentAlgorithm.Value.Comparer);
+
+            return listItems;
+        }
+
+        public SortAlgorithm<T> CurrentAlgorithm => _currentAlgorithm.Value;
+        public IObservable<SortAlgorithm<T>> ListenCurrentAlgorithm() => _currentAlgorithm;
+
+        public void SetAlgorithm(SortAlgorithm<T> algo)
+        {
+            _currentAlgorithm.OnNext(algo);
         }
 
         public void Dispose()
         {
-            _subject.Dispose();
+            _currentAlgorithm.Dispose();
         }
     }
 }
