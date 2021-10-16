@@ -11,7 +11,7 @@
 @typeparam TItem
 
 <div>
-    <Table Items="Items" Context="item" PageController=pageController>
+    <Table Items="Items" Context="item" PageController=pageController SortController=sortController>
         <Header>
             @foreach (var header in LoadHeaders())
             {
@@ -20,7 +20,7 @@
                 <TableHeader ShowSortContent="@(header.SortSelector != null)">
                     <ChildContent>@header.Name</ChildContent>
                     <SortContent>
-                        @*TODO: Need to put the sorter here*@
+                        <TableHeaderSorter SortController=sortController Name=@header.SortSelector />
                     </SortContent>
                 </TableHeader>
             }
@@ -42,8 +42,7 @@
 </div>
 
 @code {
-    //protected SortController<TItem> sortController = null;
-
+    protected SortController<TItem> sortController = new();
     protected PageController<TItem> pageController = new(10);
 
     protected ICollection<ReflectionTableHeader<TItem>> LoadHeaders()
@@ -84,24 +83,6 @@
 
             return tableHeader;
         }).ToList();
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        //var headers = LoadHeaders();
-        //var firstHeader = headers.First();
-
-        //var firstHeaderProp = typeof(TItem).GetProperty(firstHeader.SortSelector);
-        //Func<TItem, IComparable> sorter = item => firstHeaderProp.GetValue(item) as IComparable;
-
-        //sortController = new(firstHeader.Name, false, SortExpressionComparer<TItem>.Ascending(sorter));
-    }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
     }
 
     [Parameter]
