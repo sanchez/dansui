@@ -41,7 +41,7 @@
 
 @code {
     protected SortController<TItem> sortController = new();
-    protected PageController<TItem> pageController = new(10);
+    protected PageController<TItem> pageController;
 
     protected ICollection<ReflectionTableHeader<TItem>> LoadHeaders()
     {
@@ -82,6 +82,16 @@
             return tableHeader;
         }).ToList();
     }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        pageController = new(ItemsPerPage);
+    }
+
+    [Parameter]
+    public int ItemsPerPage { get; set; } = 10;
 
     [Parameter]
     public bool ShouldOverflow { get; set; } = false;

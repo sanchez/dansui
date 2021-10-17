@@ -8,6 +8,11 @@
     <ReflectionTable Items=@people />
 </Card>
 
+<Card>
+    <h2>Smaller Reflection Table</h2>
+    <ReflectionTable Items=@people ItemsPerPage=5 />
+</Card>
+
 @code {
     protected ICollection<RegisteredPerson> people;
 
