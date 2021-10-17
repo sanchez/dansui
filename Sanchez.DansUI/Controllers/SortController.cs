@@ -1,66 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
+using System.Linq;
 using System.Reactive.Subjects;
-using DynamicData;
 
 namespace Sanchez.DansUI.Controllers
 {
-    public static class SortControllerExtensions
+    public interface ISortController<T> : IDisposable
     {
-        public static IObservable<IChangeSet<T>> BindSortController<T>(this IObservable<IChangeSet<T>> source, SortController<T> sortController)
+        SortAlgorithm<T> CurrentAlgorithm { get; }
+        IObservable<SortAlgorithm<T>> ListenCurrentAlgorithm();
+
+        void SetAlgorithm(SortAlgorithm<T> algo);
+
+        ICollection<T> SortContent(ICollection<T> items);
+    }
+
+    public class SortComparer<T> : IComparer<T>
+    {
+        protected readonly bool _isDescending;
+        protected readonly Func<T, IComparable> _comparer;
+
+        public SortComparer(bool isDescending, Func<T, IComparable> comparer)
         {
-            return source
-                .Sort(sortController.Select(x => x.Comparer));
+            _isDescending = isDescending;
+            _comparer = comparer;
         }
 
-        public static IObservable<ISortedChangeSet<T, TKey>> BindSortController<T, TKey>(this IObservable<IChangeSet<T, TKey>> source, SortController<T> sortController) where TKey : notnull
+        int CompareNoDirection(T? x, T? y)
         {
-            return source
-                .Sort(sortController.Select(x => x.Comparer));
+            if (x == null && y == null) return 0;
+            if (x == null) return -1;
+            if (y == null) return 1;
+
+            var xItem = _comparer(x);
+            var yItem = _comparer(y);
+
+            if (xItem == null && yItem == null) return 0;
+            if (xItem == null) return -1;
+            if (yItem == null) return 1;
+
+            return xItem.CompareTo(yItem);
+        }
+
+        public int Compare(T? x, T? y)
+        {
+            var res = CompareNoDirection(x, y);
+
+            if (_isDescending)
+                return res * -1;
+            return res;
         }
     }
 
-    public class SortController<T> : IObservable<SortAction<T>>, IDisposable
+    public class SortAlgorithm<T>
     {
-        protected SortAction<T> _lastValue;
-        protected BehaviorSubject<SortAction<T>> _subject;
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public bool IsDescending { get; set; }
+        public Comparison<T> Comparer { get; set; }
 
-        public SortController(SortAction<T> initialComparer)
+        public SortAlgorithm() { }
+        public SortAlgorithm(string name, bool isDescending, Func<T, IComparable> selector)
         {
-            _subject = new(initialComparer);
-            _lastValue = initialComparer;
+            Key = name;
+            Name = name;
+            IsDescending = isDescending;
+            Comparer = new SortComparer<T>(isDescending, selector).Compare;
+        }
+    }
+
+    public class SortController<T> : ISortController<T>
+    {
+        protected BehaviorSubject<SortAlgorithm<T>> _currentAlgorithm;
+
+        public SortController(SortAlgorithm<T> initialSort)
+        {
+            _currentAlgorithm = new(initialSort);
         }
 
-        public SortController(string key, bool wasDescending, IComparer<T> comparer)
-        {
-            var action = new SortAction<T>()
-            {
-                Comparer = comparer,
-                PropertyName = key,
-                WasDescending = wasDescending
-            };
+        public SortController() : this(null) { }
 
-            _subject = new(action);
-            _lastValue = action;
+        public ICollection<T> SortContent(ICollection<T> items)
+        {
+            if (_currentAlgorithm.Value == null) return items;
+
+            var listItems = items.ToList();
+            listItems.Sort(_currentAlgorithm.Value.Comparer);
+
+            return listItems;
         }
 
-        public void Emit(SortAction<T> newComparer)
-        {
-            _lastValue = newComparer;
-            _subject.OnNext(newComparer);
-        }
+        public SortAlgorithm<T> CurrentAlgorithm => _currentAlgorithm.Value;
+        public IObservable<SortAlgorithm<T>> ListenCurrentAlgorithm() => _currentAlgorithm;
 
-        public SortAction<T> LastValue => _lastValue;
-
-        public IDisposable Subscribe(IObserver<SortAction<T>> observer)
+        public void SetAlgorithm(SortAlgorithm<T> algo)
         {
-            return _subject.Subscribe(observer);
+            _currentAlgorithm.OnNext(algo);
         }
 
         public void Dispose()
         {
-            _subject.Dispose();
+            _currentAlgorithm.Dispose();
         }
     }
 }

@@ -1,92 +1,88 @@
-﻿using DynamicData;
-using System;
-using System.Reactive.Subjects;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace Sanchez.DansUI.Controllers
 {
-    public static class PageControllerExtensions
+    public interface IPageController : IDisposable
     {
-        public static IObservable<IChangeSet<T>> BindPageController<T>(this IObservable<IChangeSet<T>> source, PageController pageController)
-        {
-            return source
-                .Page(pageController)
-                .Do(x =>
-                {
-                    pageController.MaxPages = x.Response.Pages;
-                    pageController.CurrentPage = x.Response.Page;
-                });
-        }
+        int CurrentPage { get; }
+        IObservable<int> ListenCurrentPage();
 
-        public static IObservable<IChangeSet<T, TKey>> BindPageController<T, TKey>(this IObservable<ISortedChangeSet<T, TKey>> source, PageController pageController) where TKey : notnull
-        {
-            return source
-                .Page(pageController)
-                .Do(x =>
-                {
-                    pageController.MaxPages = x.Response.Pages;
-                    pageController.CurrentPage = x.Response.Page;
-                });
-        }
+        int MaxPage { get; }
+        IObservable<int> ListenMaxPage();
+
+        void SetPage(int pageNo);
     }
 
-    public class PageController : IObservable<IPageRequest>, IDisposable
+    public interface IPageController<T> : IPageController
     {
-        protected int _pageSize;
-        protected int _currentPage = 1;
-        protected int _maxPages = -1;
+        ICollection<T> PageContent(ICollection<T> items);
+    }
 
-        protected BehaviorSubject<IPageRequest> _subject;
+    public class PageController<T> : IPageController<T>
+    {
+        protected BehaviorSubject<int> _currentPage;
+        protected BehaviorSubject<int> _maxPage;
+        protected int _itemsPerPage;
 
-        public PageController(int pageSize)
+        public PageController(int itemsPerPage, int currentPage, int maxPage)
         {
-            _pageSize = pageSize;
-            _subject = new(new PageRequest(_currentPage, pageSize));
+            _itemsPerPage = itemsPerPage;
+            _currentPage = new(currentPage);
+            _maxPage = new(maxPage);
         }
+        public PageController(int itemsPerPage, int maxPage) : this(itemsPerPage, 1, maxPage) { }
+        public PageController(int itemsPerPage) : this(itemsPerPage, -1, -1) { }
 
-        public int PageSize
+        public int CurrentPage => _currentPage.Value;
+        public IObservable<int> ListenCurrentPage() => _currentPage;
+
+        public int MaxPage => _maxPage.Value;
+        public IObservable<int> ListenMaxPage() => _maxPage;
+
+        public void SetPage(int pageNo)
         {
-            get => _pageSize;
-            set
+            if (_maxPage.Value == -1)
             {
-                if (_pageSize != value)
+                if (pageNo > 0)
                 {
-                    _pageSize = value;
-                    _subject.OnNext(new PageRequest(_currentPage, _pageSize));
+                    _currentPage.OnNext(pageNo);
                 }
             }
-        }
-
-        public int CurrentPage
-        {
-            get => _currentPage;
-            set
+            else
             {
-                if (_currentPage != value)
-                {
-                    _currentPage = value;
-                    _subject.OnNext(new PageRequest(_currentPage, _pageSize));
-                }
+                if (pageNo > _maxPage.Value)
+                    _currentPage.OnNext(pageNo);
+                else if (pageNo < 1)
+                    _currentPage.OnNext(1);
+                else
+                    _currentPage.OnNext(pageNo);
             }
         }
 
-        public int MaxPages
+        public ICollection<T> PageContent(ICollection<T> items)
         {
-            get => _maxPages;
-            set
-            {
-                _maxPages = value;
-            }
-        }
+            var numPages = items.Count / _itemsPerPage;
+            if (numPages != _maxPage.Value)
+                _maxPage.OnNext(numPages);
 
-        public IDisposable Subscribe(IObserver<IPageRequest> observer)
-        {
-            return _subject.Subscribe(observer);
+            if (_currentPage.Value == -1)
+                _currentPage.OnNext(1);
+            else if (_currentPage.Value > _maxPage.Value)
+                _currentPage.OnNext(_maxPage.Value);
+
+            var skip = (_currentPage.Value - 1) * _itemsPerPage;
+            var pagedItems = items.Skip(skip).Take(_itemsPerPage).ToList();
+            return pagedItems;
         }
 
         public void Dispose()
         {
-            _subject.Dispose();
+            _currentPage.Dispose();
+            _maxPage.Dispose();
         }
     }
 }

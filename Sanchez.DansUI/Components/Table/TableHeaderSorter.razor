@@ -1,4 +1,3 @@
-@using DynamicData.Binding
 @using Sanchez.DansUI.Icons
 @using Sanchez.DansUI.Controllers
 @using System.Reactive.Linq
@@ -21,7 +20,7 @@
         if (_clickListener != null) _clickListener.Dispose();
         if (_sortListener != null) _sortListener.Dispose();
 
-        _sortListener = SortController
+        _sortListener = SortController.ListenCurrentAlgorithm()
         .Do(x => StateHasChanged())
         .Subscribe();
 
@@ -35,9 +34,9 @@
     {
         get
         {
-            var lastValue = SortController.LastValue;
-            if (lastValue.PropertyName != Name) return IconType.CHEVRONS_UP_DOWN;
-            if (lastValue.WasDescending) return IconType.CHEVRON_UP;
+            var lastValue = SortController.CurrentAlgorithm;
+            if (lastValue?.Name != Name) return IconType.CHEVRONS_UP_DOWN;
+            if (lastValue.IsDescending) return IconType.CHEVRON_UP;
             return IconType.CHEVRON_DOWN;
         }
     }
@@ -50,29 +49,19 @@
 
     protected void HandleClick()
     {
-        var lastValue = SortController.LastValue;
-        if (lastValue.PropertyName == Name && !lastValue.WasDescending)
+        var lastValue = SortController.CurrentAlgorithm;
+        if (lastValue?.Name == Name)
         {
-            SortController.Emit(new SortAction<TItem>()
-            {
-                Comparer = SortExpressionComparer<TItem>.Descending(GenerateSelector()),
-                PropertyName = Name,
-                WasDescending = true
-            });
+            SortController.SetAlgorithm(new SortAlgorithm<TItem>(Name, !lastValue.IsDescending, GenerateSelector()));
         }
         else
         {
-            SortController.Emit(new SortAction<TItem>()
-            {
-                Comparer = SortExpressionComparer<TItem>.Ascending(GenerateSelector()),
-                PropertyName = Name,
-                WasDescending = false
-            });
+            SortController.SetAlgorithm(new SortAlgorithm<TItem>(Name, false, GenerateSelector()));
         }
     }
 
     [Parameter]
-    public SortController<TItem> SortController { get; set; }
+    public ISortController<TItem> SortController { get; set; }
 
     [Parameter]
     public string Name { get; set; }

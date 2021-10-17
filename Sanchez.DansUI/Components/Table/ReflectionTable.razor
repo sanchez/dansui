@@ -1,5 +1,3 @@
-@using DynamicData
-@using DynamicData.Binding
 @using Sanchez.DansUI.Attributes
 @using Sanchez.DansUI.Controllers
 @using Sanchez.DansUI.Icons
@@ -9,21 +7,18 @@
 @implements IDisposable
 
 @typeparam TItem
-@typeparam TItemKey
 
 <div>
-    <Table Items="@resData" Context="item">
+    <Table Items="Items" Context="item" PageController=pageController SortController=sortController>
         <Header>
             @foreach (var header in LoadHeaders())
             {
                 @if (header.IsVisible == false) continue;
 
                 <TableHeader ShowSortContent="@(header.SortSelector != null)">
-                    <ChildContent>
-                        @header.Name
-                    </ChildContent>
+                    <ChildContent>@header.Name</ChildContent>
                     <SortContent>
-                        <TableHeaderSorter SortController=@sortController Name=@header.SortSelector />
+                        <TableHeaderSorter SortController=sortController Name=@header.SortSelector />
                     </SortContent>
                 </TableHeader>
             }
@@ -34,29 +29,19 @@
                 @if (header.IsVisible == false) continue;
 
                 <TableCell ShowPrefix="@(header.CellPrefix != null)" ShowSuffix="@(header.CellSuffix != null)">
-                    <Prefix>
-                        @header.RenderCellPrefix(item)
-                    </Prefix>
-                    <ChildContent>
-                        @header.Selector(item)
-                    </ChildContent>
-                    <Suffix>
-                        @header.RenderCellSuffix(item)
-                    </Suffix>
+                    <Prefix>@header.RenderCellPrefix(item)</Prefix>
+                    <ChildContent>@header.Selector(item)</ChildContent>
+                    <Suffix>@header.RenderCellSuffix(item)</Suffix>
                 </TableCell>
             }
         </RowTemplate>
     </Table>
-    <TablePager PageController=@pageController />
+    <TablePager PageController=pageController />
 </div>
 
 @code {
-    protected IDisposable dataLoader;
-    protected ReadOnlyObservableCollection<TItem> resData;
-
-    protected SortController<TItem> sortController = null;
-
-    protected PageController pageController = new(10);
+    protected SortController<TItem> sortController = new();
+    protected PageController<TItem> pageController = new(10);
 
     protected ICollection<ReflectionTableHeader<TItem>> LoadHeaders()
     {
@@ -98,33 +83,6 @@
         }).ToList();
     }
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        var headers = LoadHeaders();
-        var firstHeader = headers.First();
-
-        var firstHeaderProp = typeof(TItem).GetProperty(firstHeader.SortSelector);
-        Func<TItem, IComparable> sorter = item => firstHeaderProp.GetValue(item) as IComparable;
-
-        sortController = new(firstHeader.Name, false, SortExpressionComparer<TItem>.Ascending(sorter));
-    }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        if (resData != null) dataLoader.Dispose();
-
-        dataLoader = Data.Connect()
-        .BindSortController(sortController)
-        .BindPageController(pageController)
-        .Bind(out resData)
-        .DisposeMany()
-        .Subscribe();
-    }
-
     [Parameter]
     public bool ShouldOverflow { get; set; } = false;
 
@@ -135,12 +93,11 @@
     public bool AlternateRowColors { get; set; } = true;
 
     [Parameter]
-    public ISourceCache<TItem, TItemKey> Data { get; set; }
+    public ICollection<TItem> Items { get; set; }
 
     public void Dispose()
     {
+        pageController.Dispose();
         sortController.Dispose();
-        if (dataLoader != null)
-            dataLoader.Dispose();
     }
 }

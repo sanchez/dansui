@@ -1,19 +1,17 @@
 @using BlazorComponentUtilities
-@using System.Collections.ObjectModel
+@using Sanchez.DansUI.Controllers
 @using System.Reactive.Linq
-@using System.Collections.Specialized
-@using System.ComponentModel
 
 @typeparam TItem
 
-<CascadingValue Name="@nameof(TableConfig)" Value=@tableConfig>
+<CascadingValue Name="@nameof(TableConfig)" Value=tableConfig>
     <div class="@tableContainer">
-        <table class=@tableClass>
+        <table class="@tableClass">
             <thead>
                 <tr>@Header</tr>
             </thead>
             <tbody>
-                @foreach (var item in Items)
+                @foreach (var item in ProcessedItems)
                 {
                     <tr>@RowTemplate(item)</tr>
                 }
@@ -23,36 +21,63 @@
 </CascadingValue>
 
 @code {
-    private string tableClass;
-    private TableConfig tableConfig = new TableConfig();
+    IDisposable tablePageListener;
+    IDisposable sortPageListener;
 
-    private string tableContainer => ShouldOverflow ? "container should-overflow" : "container";
+    string tableClass;
+    TableConfig tableConfig = new TableConfig();
+    string tableContainer => ShouldOverflow ? "container should-overflow" : "container";
 
-    protected void OnDataUpdate(object sender, object args)
+    IEnumerable<TItem> ProcessedItems
     {
-        InvokeAsync(StateHasChanged);
+        get
+        {
+            IEnumerable<TItem> items = Items;
+            if (SortController != null)
+                items = SortController.SortContent(items.ToList());
+
+            if (PageController != null)
+                items = PageController.PageContent(items.ToList());
+
+            return items;
+        }
     }
 
     protected override void OnParametersSet()
     {
-        if (Items != null)
-        {
-            ((INotifyCollectionChanged)Items).CollectionChanged -= OnDataUpdate;
-            ((INotifyPropertyChanged)Items).PropertyChanged -= OnDataUpdate;
-        }
-
         base.OnParametersSet();
 
         tableConfig.ShowBorders = ShowBorders;
         tableConfig.AltRowColors = AlternateRowColors;
 
         tableClass = new CssBuilder()
-        .AddClass("show-borders", when: tableConfig.ShowBorders)
-        .AddClass("alt-rows", when: tableConfig.AltRowColors)
-        .Build();
+            .AddClass("show-borders", when: tableConfig.ShowBorders)
+            .AddClass("alt-rows", when: tableConfig.AltRowColors)
+            .Build();
 
-        ((INotifyCollectionChanged)Items).CollectionChanged += OnDataUpdate;
-        ((INotifyPropertyChanged)Items).PropertyChanged += OnDataUpdate;
+        if (tablePageListener != null) tablePageListener.Dispose();
+        if (PageController != null)
+        {
+            tablePageListener =
+                Observable.Merge(
+                    PageController.ListenMaxPage(),
+                    PageController.ListenCurrentPage()
+                )
+                .Do(x =>
+                {
+                    InvokeAsync(StateHasChanged);
+                })
+                .Subscribe();
+        }
+
+        if (sortPageListener != null) sortPageListener.Dispose();
+        if (SortController != null)
+        {
+            sortPageListener = SortController.ListenCurrentAlgorithm()
+                .Do(x => InvokeAsync(StateHasChanged))
+                .Subscribe();
+
+        }
     }
 
     [Parameter]
@@ -71,5 +96,11 @@
     public RenderFragment<TItem> RowTemplate { get; set; }
 
     [Parameter]
-    public ReadOnlyObservableCollection<TItem> Items { get; set; }
+    public ICollection<TItem> Items { get; set; }
+
+    [Parameter]
+    public IPageController<TItem> PageController { get; set; }
+
+    [Parameter]
+    public ISortController<TItem> SortController { get; set; }
 }

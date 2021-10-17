@@ -1,6 +1,6 @@
-using DynamicData;
 using Sanchez.DansUI.Attributes;
 using Sanchez.DansUI.Runner.Blazor.Components;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,14 +91,11 @@ namespace Sanchez.DansUI.Runner.Blazor.Models
             };
         }
 
-        public static ISourceCache<RegisteredPerson, string> GeneratePeople(int count)
+        public static ICollection<RegisteredPerson> GeneratePeopleList(int count)
         {
             var people = Enumerable.Range(0, count).Select(x => CreateRandom()).ToList();
 
-            var source = new SourceCache<RegisteredPerson, string>(x => x.Id);
-            source.AddOrUpdate(people);
-
-            return source;
+            return people;
         }
     }
 }

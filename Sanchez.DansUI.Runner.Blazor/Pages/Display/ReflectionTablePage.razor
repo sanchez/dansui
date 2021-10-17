@@ -1,22 +1,20 @@
 @page "/display/reflectiontable"
 
 @using Sanchez.DansUI.Runner.Blazor.Models
-@using DynamicData
 
 <h1>Reflection Table</h1>
 <Card>
     <h2>Registered People</h2>
-    <ReflectionTable Data=@people />
+    <ReflectionTable Items=@people />
 </Card>
 
 @code {
-    protected ISourceCache<RegisteredPerson, string> people = new SourceCache<RegisteredPerson, string>(x => x.Id);
+    protected ICollection<RegisteredPerson> people;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        people = RegisteredPerson.GeneratePeople(100);
-        StateHasChanged();
+        people = RegisteredPerson.GeneratePeopleList(100);
     }
 }
