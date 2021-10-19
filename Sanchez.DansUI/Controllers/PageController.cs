@@ -65,7 +65,7 @@ namespace Sanchez.DansUI.Controllers
 
         public ICollection<T> PageContent(ICollection<T> items)
         {
-            var numPages = items.Count / _itemsPerPage;
+            var numPages = (int)Math.Ceiling(items.Count / (double)_itemsPerPage);
             if (numPages != _maxPage.Value)
                 _maxPage.OnNext(numPages);
 

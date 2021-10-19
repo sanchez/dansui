@@ -13,13 +13,20 @@
     <ReflectionTable Items=@people ItemsPerPage=5 />
 </Card>
 
+<Card>
+    <h2>Other Smaller ReflectionTable</h2>
+    <ReflectionTable Items=@smallerPeople ItemsPerPage=5 />
+</Card>
+
 @code {
     protected ICollection<RegisteredPerson> people;
+    protected ICollection<RegisteredPerson> smallerPeople;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
         people = RegisteredPerson.GeneratePeopleList(100);
+        smallerPeople = RegisteredPerson.GeneratePeopleList(6);
     }
 }
