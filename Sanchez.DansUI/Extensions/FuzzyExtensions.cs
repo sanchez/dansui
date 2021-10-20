@@ -1,5 +1,4 @@
-using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Sanchez.DansUI.Extensions
 {
@@ -18,6 +17,23 @@ namespace Sanchez.DansUI.Extensions
             }
 
             return minValue;
+        }
+
+        public static int FuzzyMatch(this string input, string pattern)
+        {
+            // Current match values are
+            const int MATCHED_CHARACTER = 1; // when a input and pattern characters match, case insensitive
+            const int MATCHED_UPPER_CHARACTER = 1; // when a input and pattern character match and are both upper case
+            const int MATCHED_BEGINNING_BONUS = 3; // when the first input character matches the first pattern character
+            const int MATCHED_SEQUENTIAL_BONUS = 5; // when the next character in both sequences matches
+            const int UNMATCHED_PATTERN_CHARACTER = -1; // when a character on the pattern is not matched with the input
+
+            Dictionary<char, (bool IsUpper, int Position)> inputDict;
+
+            // TODO: make this more efficient and do something with the ability to track upper/lower case
+            //var inputDict = input.Select((x, i) => (Input: x, Position: i)).GroupBy(x => x.Input).ToDictionary(x => x.Key, x => x.Select(y => y.Position));
+
+            return 0;
         }
 
         public static int LevenshteinDistance(this string a, string b)
