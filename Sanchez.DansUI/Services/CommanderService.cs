@@ -51,8 +51,9 @@ namespace Sanchez.DansUI.Services
         public IEnumerable<Command> SearchCommands(string name)
         {
             return _commands
-                .Select(x => (Rating: x.Name.LevenshteinDistance(name), Command: x))
-                .OrderBy(x => x.Rating)
+                .Select(x => (Rating: x.Name.FuzzyMatch(name), Command: x))
+                .Where(x => x.Rating >= 0)
+                .OrderByDescending(x => x.Rating)
                 .Take(5)
                 .Select(x => x.Command);
         }
