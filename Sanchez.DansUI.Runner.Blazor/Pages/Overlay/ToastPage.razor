@@ -26,6 +26,13 @@
         </Suffix>
     </Button>
 
+    <Button @onclick=HandleToastControlledNotification>
+        <ChildContent>Controlled Notification</ChildContent>
+        <Suffix>
+            <Icon Type="IconType.BELL" />
+        </Suffix>
+    </Button>
+
 </div>
 
 @code {
@@ -43,7 +50,7 @@
 {
     if (res)
     {
-    return ToastService.Push<bool>(ToastSeverity.WARNING, "Are you sure?", "Are you really sure about that?", x =>
+        return ToastService.Push<bool>(ToastSeverity.WARNING, "Are you sure?", "Are you really sure about that?", x =>
     @<Button @onclick="() => x(true)">Yeah</Button>
     );
     }
@@ -65,15 +72,19 @@ ToastService.Push(ToastSeverity.SUCCESS, "This is success", "Hello world from a 
 ToastService.Push(ToastSeverity.WARNING, "This is warning", "Hello world from a warning"),
 ToastService.Push(ToastSeverity.ERROR, "This is error", "Hello world from an error")
 };
+        previousAllToastNotification = Observable.Merge(notifications).Subscribe();
+    }
 
-        previousAllToastNotification = notifications
-        .ToObservable()
-        .SelectMany(x => x)
-        .Subscribe();
+    async void HandleToastControlledNotification()
+    {
+        var notification = ToastService.Push(ToastSeverity.WARNING, "This will go away", "Within a couple of seconds this will go away, hopefully").Subscribe();
+
+        await Task.Delay(1000);
+
+        notification.Dispose();
     }
 
     IDisposable commandDisposes;
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -81,11 +92,10 @@ ToastService.Push(ToastSeverity.ERROR, "This is error", "Hello world from an err
         commandDisposes = CommandService.RegisterCommands(new List<Command>()
 {
 new Command(IconType.BELL, "Chained Notification", "Trigger the chained notification", HandleToastNotification),
-new Command(IconType.BELL, "All Notifications", HandleToastAllNotifications)
+new Command(IconType.BELL, "All Notifications", HandleToastAllNotifications),
+new Command(IconType.BELL, "Controlled Notification", HandleToastControlledNotification)
 });
     }
-
-
 
     public void Dispose()
     {
