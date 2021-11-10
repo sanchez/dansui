@@ -1,0 +1,39 @@
+﻿@page "/component/dragndrop"
+
+@using Sanchez.DansUI.Runner.Blazor.Models
+
+<h1>Drag N Drop</h1>
+
+<Slimmer>
+	<TwoPane>
+		<Draggable State=person>
+			<Card>
+				<h1>@person.FirstName @person.LastName</h1>
+				<p>
+					<b>Age: </b>@person.Age
+				</p>
+				<p>
+					<b>PostCode: </b>@person.PostCode
+				</p>
+			</Card>
+		</Draggable>
+	</TwoPane>
+</Slimmer>
+
+<h1>DropZones</h1>
+<Slimmer>
+	<TwoPane>
+		<div>
+			<h2>Left</h2>
+			<Droppable />
+		</div>
+		<div>
+			<h2>Right</h2>
+			<Droppable />
+		</div>
+	</TwoPane>
+</Slimmer>
+
+@code {
+	RegisteredPerson person = RegisteredPerson.CreateRandom();
+}

@@ -1,0 +1,19 @@
+﻿@using Sanchez.DansUI.Models
+
+@typeparam T
+
+<div draggable="true" ondragstart=@dragCommand>
+	@ChildContent
+</div>
+
+@code {
+	string dragCommand => $"DansUI.dragger.handleDragStart(\"{encodedData}\")";
+	string encodedData => System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(serializedData));
+	string serializedData => System.Text.Json.JsonSerializer.Serialize(new DraggableState<T>(State));
+
+	[Parameter]
+	public T State { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+}

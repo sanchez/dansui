@@ -45,6 +45,19 @@ DansUI.dropper = (function () {
     return self;
 })();
 
+DansUI.dragger = (function () {
+    var self = {};
+
+    self.handleDragStart = function (serializedData) {
+        return function (event) {
+            event.dataTransfer.dropEffect = "move";
+            event.dataTransfer.setData("text/plain", serializedData);
+        }
+    }
+
+    return self;
+})();
+
 DansUI.page = (function () {
     var self = {};
 
