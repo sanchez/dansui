@@ -1,19 +1,31 @@
 ﻿@using Sanchez.DansUI.Models
+@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+
+@inject IJSRuntime JSRuntime
 
 @typeparam T
 
-<div draggable="true" ondragstart=@dragCommand>
-	@ChildContent
+<div @ref="div" draggable="true">
+    @ChildContent
 </div>
 
 @code {
-	string dragCommand => $"DansUI.dragger.handleDragStart(\"{encodedData}\")";
-	string encodedData => System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(serializedData));
-	string serializedData => System.Text.Json.JsonSerializer.Serialize(new DraggableState<T>(State));
+    ElementReference div;
 
-	[Parameter]
-	public T State { get; set; }
+    string dragCommand => $"DansUI.dragger.handleDragStart(\"{encodedData}\")";
+    string encodedData => System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(serializedData));
+    string serializedData => System.Text.Json.JsonSerializer.Serialize(new DraggableState<T>(State));
 
-	[Parameter]
-	public RenderFragment ChildContent { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.BindDraggable(div, serializedData);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    [Parameter]
+    public T State { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 }

@@ -48,11 +48,26 @@ DansUI.dropper = (function () {
 DansUI.dragger = (function () {
     var self = {};
 
-    self.handleDragStart = function (serializedData) {
-        return function (event) {
+    self.bindDraggable = function (element, item) {
+        function handleDragStart(event) {
             event.dataTransfer.dropEffect = "move";
-            event.dataTransfer.setData("text/plain", serializedData);
+            event.dataTransfer.setData("text/plain", item);
         }
+        element.addEventListener("dragstart", handleDragStart);
+    }
+
+    self.bindDroppable = function (element, onDragOver, onDragLeave) {
+        function handleDragOver(event) {
+        }
+        element.addEventListener("dragover", handleDragOver);
+    }
+
+    self.handleDragStart = function (serializedData, event) {
+        console.log("Here");
+        console.log(serializedData);
+        event.dataTransfer.dropEffect = "move";
+        event.dataTransfer.setData("text/plain", serializedData);
+
     }
 
     return self;
