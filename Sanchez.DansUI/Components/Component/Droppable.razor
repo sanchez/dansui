@@ -1,22 +1,32 @@
-﻿<div class="zone-outer">
-    <div class="zone" style=@styles @ondragover="HandleDragOver" @ondragleave="HandleDragLeave">
+﻿@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+
+@inject IJSRuntime JSRuntime
+
+<div class="zone-outer" @ref="div">
+    <div class="zone">
     </div>
 </div>
 
 @code {
-    bool isHovering = false;
-    string borderColor => isHovering ? "var(--primary)" : "var(--card-base-outline)";
-    int height => isHovering ? Height : DropOverHeight;
-    string styles => $"height: {height}px; border-color: {borderColor}";
+    ElementReference div;
 
-    void HandleDragOver(DragEventArgs args)
+    protected async Task HandleDragEnter(DragEventArgs args)
     {
-        isHovering = true;
+
     }
 
-    void HandleDragLeave(DragEventArgs args)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        isHovering = false;
+        if (firstRender)
+            await JSRuntime.BindDroppable<object>(div, HandleCanDrop);
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected bool HandleCanDrop(object item)
+    {
+        return true;
     }
 
     [Parameter]

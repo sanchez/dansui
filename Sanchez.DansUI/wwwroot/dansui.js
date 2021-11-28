@@ -58,8 +58,36 @@ DansUI.dragger = (function () {
 
     self.bindDroppable = function (element, onDragOver, onDragLeave) {
         function handleDragOver(event) {
+            // fired when dropped
+            console.log("dragover");
         }
-        element.addEventListener("dragover", handleDragOver);
+        //element.addEventListener("dragover", handleDragOver);
+
+        function handleDragEnter(event) {
+            // fired when entered the zone
+            console.log("dragenter");
+            var dragItems = event.dataTransfer.items;
+            for (var i = 0; i < dragItems.length; i++) {
+                if ((dragItems[i].kind == 'string') && (dragItems[i].type.match('^text/plain'))) {
+                    dragItems[i].getAsString(function (s) {
+                        console.log(s);
+                    });
+                }
+            }
+        }
+        element.addEventListener("dragenter", handleDragEnter);
+
+        function handleDragLeave(event) {
+            // fired when left the zone
+            console.log("dragleave");
+        }
+        element.addEventListener("dragleave", handleDragLeave);
+
+        function handleDropped(event) {
+            // fired when dropped on
+            console.log("I got dropped on");
+        }
+        element.addEventListener("drop", handleDropped);
     }
 
     self.handleDragStart = function (serializedData, event) {

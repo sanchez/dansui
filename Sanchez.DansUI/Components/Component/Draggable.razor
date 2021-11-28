@@ -13,13 +13,13 @@
 @code {
     ElementReference div;
 
-    string dragCommand => $"DansUI.dragger.handleDragStart(\"{encodedData}\")";
-    string encodedData => System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(serializedData));
     string serializedData => System.Text.Json.JsonSerializer.Serialize(new DraggableState<T>(State));
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JSRuntime.BindDraggable(div, serializedData);
+        if (firstRender)
+            await JSRuntime.BindDraggable(div, serializedData);
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
