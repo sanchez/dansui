@@ -101,6 +101,46 @@ DansUI.dragger = (function () {
     return self;
 })();
 
+DansUI.input = (function () {
+    var self = {};
+
+    self.bindFileInput = function (dropZone, inputFile) {
+        function onDragHover(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "link";
+        }
+
+        function onDragLeave(e) {
+            e.preventDefault();
+        }
+
+        function onDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            inputFile.files = event.dataTransfer.files;
+            const changeEvent = new Event("change", { bubbles: true });
+            inputFile.dispatchEvent(changeEvent);
+        }
+
+        dropZone.addEventListener("dragenter", onDragHover);
+        dropZone.addEventListener("dragover", onDragHover);
+        dropZone.addEventListener("dragleave", onDragLeave);
+        dropZone.addEventListener("drop", onDrop);
+
+        return {
+            dispose: () => {
+                dropZone.removeEventListener("dragenter", onDragHover);
+                dropZone.removeEventListener("dragover", onDragHover);
+                dropZone.removeEventListener("dragleave", onDragLeave);
+                dropZone.removeEventListener("drop", onDrop);
+            }
+        }
+    }
+
+    return self;
+})();
+
 DansUI.page = (function () {
     var self = {};
 

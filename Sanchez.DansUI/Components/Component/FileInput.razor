@@ -1,6 +1,12 @@
 @using Microsoft.AspNetCore.Components.Forms;
+@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+@using System.Reflection
 
-<div class="container">
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="container" @ref=dropZone>
     <label>
         @if (Label != null)
         {
@@ -29,12 +35,26 @@
                 <span>@Suffix</span>
             }
         </span>
-        <InputFile OnChange=@HandleChange @attributes=@AdditionalAttributes />
+        <InputFile @ref=inputFile OnChange=@HandleChange @attributes=@AdditionalAttributes />
     </label>
 </div>
 
 @code {
+    private ElementReference dropZone;
+    private InputFile inputFile;
+    private IJSObjectReference dropZoneJS;
+
     private ICollection<string> selectedFiles = new List<string>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var inputFileElement = inputFile.GetType().GetField("_inputFileElement", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var inputFileElementValue = (ElementReference)inputFileElement.GetValue(inputFile);
+            dropZoneJS = await JSRuntime.BindFileInput(dropZone, inputFileElementValue);
+        }
+    }
 
     private Task HandleChange(InputFileChangeEventArgs ev)
     {
@@ -61,11 +81,22 @@
     public RenderFragment Prefix { get; set; }
 
     [Parameter]
-    public RenderFragment Suffix { get; set; } = @<Icon Type="Icons.IconType.FILE_INPUT" />;
+    public RenderFragment Suffix { get; set; } = 
+    @<Icon Type="Icons.IconType.FILE_INPUT" />
+    ;
 
     [Parameter]
     public EventCallback<InputFileChangeEventArgs> OnChange { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (dropZoneJS != null)
+        {
+            await dropZoneJS.InvokeVoidAsync("dispose");
+            await dropZoneJS.DisposeAsync();
+        }
+    }
 }
