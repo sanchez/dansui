@@ -77,8 +77,10 @@ namespace Sanchez.DansUI.Icons
 
         public void Execute(GeneratorExecutionContext context)
         {
+            var currentDir = Directory.GetCurrentDirectory();
             var iconItems =
-                LoadIcons(@"D:\Documents\git\dansui\lucide\icons")
+                context.AdditionalFiles
+                .SelectMany(x => LoadIcons(x.Path))
                 .ToDictionary(x => x.IconName);
 
             var sourceBuilder = new StringBuilder();
