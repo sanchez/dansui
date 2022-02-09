@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="../lucide/icons" />
   </ItemGroup>
 
