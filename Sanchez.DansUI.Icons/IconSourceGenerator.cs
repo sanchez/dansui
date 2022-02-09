@@ -1,6 +1,10 @@
 using Microsoft.CodeAnalysis;
+
 using Sanchez.DansUI.Icons.Models;
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,22 +16,33 @@ namespace Sanchez.DansUI.Icons
     {
         protected IEnumerable<IconEntry> LoadIcons(string path)
         {
-            var files = Directory.EnumerateFiles(path);
+            var icons = new List<IconEntry>();
 
-            foreach (var x in Directory.EnumerateFiles(path))
+            try
             {
-                if (Path.GetExtension(x) != ".svg") continue;
+                var files = Directory.EnumerateFiles(path);
 
-                yield return new IconEntry()
+
+                foreach (var x in Directory.EnumerateFiles(path))
                 {
-                    IconName = Path.GetFileNameWithoutExtension(x),
-                    IconSource =
-                        File.ReadAllText(x)
-                            .Replace("\n", string.Empty)
-                            .Replace("\r", string.Empty)
-                            .Replace("\t", string.Empty)
-                };
+                    if (Path.GetExtension(x) != ".svg") continue;
+
+                    icons.Add(new IconEntry()
+                    {
+                        IconName = Path.GetFileNameWithoutExtension(x),
+                        IconSource =
+                            File.ReadAllText(x)
+                                .Replace("\n", string.Empty)
+                                .Replace("\r", string.Empty)
+                                .Replace("\t", string.Empty)
+                    });
+                }
             }
+            catch (Exception ex)
+            {
+            }
+
+            return icons;
         }
 
         protected string GetName(IconEntry icon) => icon.IconName.ToUpper().Replace(' ', '_').Replace('-', '_');
@@ -63,8 +78,7 @@ namespace Sanchez.DansUI.Icons
         public void Execute(GeneratorExecutionContext context)
         {
             var iconItems =
-                context.AdditionalFiles
-                .SelectMany(x => LoadIcons(x.Path))
+                LoadIcons(@"D:\Documents\git\dansui\lucide\icons")
                 .ToDictionary(x => x.IconName);
 
             var sourceBuilder = new StringBuilder();
@@ -85,10 +99,10 @@ namespace Sanchez.DansUI.Icons
         public void Initialize(GeneratorInitializationContext context)
         {
 #if DEBUG
-            //if (!Debugger.IsAttached)
-            //{
-            //    Debugger.Launch();
-            //}
+            if (!Debugger.IsAttached)
+            {
+                //Debugger.Launch();
+            }
 #endif
         }
     }
