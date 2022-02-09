@@ -19,9 +19,15 @@ namespace Sanchez.DansUI.Extensions
             return jsRuntime.InvokeAsync<BrowserDimensions>("DansUI.page.currentSize");
         }
 
-        public static ValueTask DownloadFile(this IJSRuntime jsRuntime, Stream stream)
+        public static async ValueTask DownloadFile(this IJSRuntime jsRuntime, string fileName, Stream stream)
         {
             using var streamRef = new DotNetStreamReference(stream);
+            await jsRuntime.InvokeVoidAsync("DansUI.page.downloadFileFromStream", fileName, streamRef);
+        }
+
+        public static ValueTask TriggerFileDownload(this IJSRuntime jsRuntime, string fileName, string url)
+        {
+            return jsRuntime.InvokeVoidAsync("DansUI.page.triggerFileDownload", fileName, url);
         }
     }
 }

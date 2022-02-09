@@ -151,6 +151,24 @@ DansUI.page = (function () {
         };
     }
 
+    self.triggerFileDownload = function (fileName, url) {
+        const anchorElement = document.createElement("a");
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? "";
+        anchorElement.click();
+        anchorElement.remove();
+    }
+
+    self.downloadFileFromStream = async function (fileName, contentStreamReference) {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+
+        self.triggerFileDownload(fileName, url);
+
+        URL.revokeObjectURL(url);
+    }
+
     return self;
 })();
 
