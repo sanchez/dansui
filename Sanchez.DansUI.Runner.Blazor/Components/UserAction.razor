@@ -1,0 +1,25 @@
+﻿<div @attributes="AdditionalAttributes" class="useraction">
+    <div>
+        @if (IconContent != null)
+        {
+            @IconContent
+        }
+    </div>
+    <div>
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment IconContent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+}

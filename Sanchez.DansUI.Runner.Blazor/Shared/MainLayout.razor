@@ -25,7 +25,27 @@
                 DansUI Demo Board
             </StyledLink>
         </Title>
-        <Actions>Sanchez's Profile</Actions>
+        <Actions>
+            <div @onclick="HandleUserActions">Sanchez's Profile</div>
+            <DropOver @bind-Show="@isUserActions">
+                <UserAction>
+                    <IconContent>
+                        <Icon Type="Icons.IconType.SETTINGS" />
+                    </IconContent>
+                    <ChildContent>
+                        User Profile
+                    </ChildContent>
+                </UserAction>
+                <UserAction>
+                    <IconContent>
+                        <Icon Type="Icons.IconType.LOG_OUT" />
+                    </IconContent>
+                    <ChildContent>
+                        Logout
+                    </ChildContent>
+                </UserAction>
+            </DropOver>
+        </Actions>
     </Navbar>
 
     <Sidebar IsOpen=@isSidebarOpen>
@@ -52,6 +72,13 @@
 
 @code {
     protected bool isSidebarOpen = true;
+    bool isUserActions = false;
+
+    void HandleUserActions()
+    {
+        isUserActions = true;
+        StateHasChanged();
+    }
 
     protected void HandleToggleSidebar()
     {

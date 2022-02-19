@@ -1,0 +1,11 @@
+﻿.useraction {
+    display: grid;
+    grid-template-columns: 50px 150px;
+    gap: 12px;
+    align-items: center;
+    justify-items: stretch;
+    cursor: pointer;
+    padding: 8px;
+    background-color: var(--paper-background);
+    color: var(--paper-foreground);
+}
