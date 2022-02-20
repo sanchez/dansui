@@ -3,7 +3,7 @@
 <Button @onclick=HandleShowDropOver>This does things</Button>
 
 <DropOver @bind-Show=@showDropOver>
-    Hello World
+    Hello World. <TimeDisplay DateTime=@DateTime.UtcNow Format="yyyy-MM-dd HH:mm:ss" />
 </DropOver>
 
 <h2>DropOn</h2>

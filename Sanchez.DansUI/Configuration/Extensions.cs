@@ -2,6 +2,7 @@
 
 using Sanchez.DansUI.Components.Overlay;
 using Sanchez.DansUI.IServices;
+using Sanchez.DansUI.Models;
 using Sanchez.DansUI.Services;
 using Sanchez.DansUI.Theming;
 
@@ -11,6 +12,7 @@ namespace Sanchez.DansUI.Configuration
     {
         public static void AddDansUI(this IServiceCollection services, bool isClientSide)
         {
+            services.AddScoped<UserState>();
             services.AddScoped<ThemeLoader>();
             services.AddScoped<IBrowserService, BrowserService>();
             services.AddScoped<IPopperService, PopperService>();

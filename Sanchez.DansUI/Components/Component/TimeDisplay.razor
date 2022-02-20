@@ -1,0 +1,27 @@
+﻿@using Microsoft.JSInterop
+@using Sanchez.DansUI.Extensions
+@using Sanchez.DansUI.Models
+
+@inject UserState UserState
+
+@result
+
+@code {
+    string result => DateTime.Subtract(offset).ToString(Format);
+
+    [Parameter]
+    public DateTime DateTime { get; set; }
+
+    [Parameter]
+    public string Format { get; set; }
+
+    TimeSpan offset;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            offset = await UserState.GetUserOffset();
+        }
+    }
+}

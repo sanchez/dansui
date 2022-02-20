@@ -2,6 +2,7 @@
 
 using Sanchez.DansUI.Models;
 
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -28,6 +29,12 @@ namespace Sanchez.DansUI.Extensions
         public static ValueTask TriggerFileDownload(this IJSRuntime jsRuntime, string fileName, string url)
         {
             return jsRuntime.InvokeVoidAsync("DansUI.page.triggerFileDownload", fileName, url);
+        }
+
+        public static async ValueTask<TimeSpan> GetBrowserOffset(this IJSRuntime jsRuntime)
+        {
+            int hoursOffset = await jsRuntime.InvokeAsync<int>("DansUI.datetime.timeZoneOffset");
+            return TimeSpan.FromHours(hoursOffset);
         }
     }
 }

@@ -35,6 +35,17 @@ DansUI.controls = (function () {
     return self;
 })();
 
+DansUI.datetime = (function () {
+    var self = {};
+
+    // The time offset in hours
+    self.timeZoneOffset = function () {
+        return new Date().getTimezoneOffset() / 60;
+    }
+
+    return self;
+})();
+
 DansUI.dropper = (function () {
     var self = {};
 
