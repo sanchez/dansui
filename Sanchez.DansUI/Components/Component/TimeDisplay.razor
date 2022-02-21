@@ -22,6 +22,7 @@
         if (firstRender)
         {
             offset = await UserState.GetUserOffset();
+            await InvokeAsync(StateHasChanged);
         }
     }
 }
