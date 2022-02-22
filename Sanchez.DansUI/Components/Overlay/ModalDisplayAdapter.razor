@@ -20,7 +20,7 @@
         base.OnInitialized();
 
         modalSubscription = ModalService.DisplayStack()
-            .Do(x =>
+            .SelectMany(async x =>
             {
                 if (x == null)
                 {
@@ -29,6 +29,11 @@
                 } 
                 else
                 {
+                    currentModal = null;
+                    currentDismiss = null;
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Delay(10);
+
                     currentDismiss = x.OnClosed;
                     currentModal = (builder) =>
                     {
@@ -39,7 +44,9 @@
                         builder.CloseComponent();
                     };
                 }
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
+
+                return System.Reactive.Unit.Default;
             })
             .Subscribe();
     }

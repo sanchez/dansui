@@ -7,7 +7,6 @@ using Sanchez.DansUI.InternalComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -22,8 +21,10 @@ namespace Sanchez.DansUI.Services
 
         protected LinkedList<Command> _commands = new();
 
-        protected Subject<Unit> _commandTrigger = new();
+        protected Subject<Command> _commandTrigger = new();
         protected IDisposable _commandTriggerDisposable;
+
+        protected Command _activeCommand;
 
         public CommanderService(IJSRuntime jsRuntime, IModalService modalService)
         {
@@ -31,14 +32,18 @@ namespace Sanchez.DansUI.Services
             _modalService = modalService;
 
             _commandTriggerDisposable = _commandTrigger
+                .Do(x =>
+                {
+                    _activeCommand = x;
+                })
                 .Select(x => modalService.Push<CommanderSearch, Command>())
                 .Switch()
                 .Do(x =>
                 {
-                    if (x.OnExecute != null)
-                    {
-                        x.OnExecute();
-                    }
+                    x.OnExecute?.Invoke();
+
+                    if (x.SubCommands != null)
+                        _commandTrigger.OnNext(x);
                 })
                 .Subscribe();
         }
@@ -50,7 +55,7 @@ namespace Sanchez.DansUI.Services
 
         public IEnumerable<Command> SearchCommands(string name)
         {
-            return _commands
+            return (_activeCommand?.SubCommands != null ? _activeCommand.SubCommands : _commands)
                 .Select(x => (Rating: x.Name.FuzzyMatch(name), Command: x))
                 .Where(x => x.Rating >= 0)
                 .OrderByDescending(x => x.Rating)
@@ -80,7 +85,7 @@ namespace Sanchez.DansUI.Services
         [JSInvokable]
         public void CommanderTriggered()
         {
-            _commandTrigger.OnNext(Unit.Default);
+            _commandTrigger.OnNext(null);
         }
 
         public void Dispose()

@@ -168,7 +168,13 @@
         .Select(x => new Command(x.Icon, x.Title, () => NavManager.NavigateTo(x.Url)));
         totalCommands.AddRange(linkCommands);
 
-        commandDisposes = CommandService.RegisterCommands(totalCommands);
+        commandDisposes = CommandService.RegisterCommand(new Command()
+        {
+            Icon = IconType.NAVIGATION,
+            Name = "Go to",
+            Description = "Quick navigation to a page",
+            SubCommands = totalCommands
+        });
     }
 
     public void Dispose()

@@ -1,6 +1,7 @@
 ﻿using Sanchez.DansUI.Icons;
 
 using System;
+using System.Collections.Generic;
 
 namespace Sanchez.DansUI.Components.Overlay
 {
@@ -10,6 +11,8 @@ namespace Sanchez.DansUI.Components.Overlay
         public string Name { get; set; }
         public string Description { get; set; }
         public Action OnExecute { get; set; }
+
+        public ICollection<Command> SubCommands { get; set; }
 
         public Command() { }
 
