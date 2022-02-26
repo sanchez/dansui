@@ -1,0 +1,10 @@
+﻿@typeparam TChildren
+@typeparam TItem where TItem : ITreeItem<TChildren>
+
+    @code {
+        [Parameter]
+        public ICollection<TItem> Items { get; set; }
+
+        [Parameter]
+        public RenderFragment<TItem> ChildContent { get; set; }
+    }
