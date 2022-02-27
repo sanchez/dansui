@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Sanchez.DansUI.Components.TreeView
 {
@@ -11,6 +9,6 @@ namespace Sanchez.DansUI.Components.TreeView
     {
         bool IsExpanded { get; set; }
 
-        Task<ICollection<TChildren>> GetChildren(CancellationToken cToken);
+        IObservable<ICollection<TChildren>> GetChildren(CancellationToken cToken);
     }
 }

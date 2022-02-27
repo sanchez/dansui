@@ -1,1 +1,14 @@
-﻿
+﻿.item {
+    display: grid;
+    grid-template-columns: 25px 1fr;
+    justify-items: start;
+    align-items: center;
+    justify-content: stretch;
+    align-content: start;
+
+    cursor: pointer;
+}
+
+.children {
+    padding-left: 25px;
+}

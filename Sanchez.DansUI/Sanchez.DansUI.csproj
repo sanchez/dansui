@@ -33,10 +33,4 @@
     </PackageReference>
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Components\TreeView\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\TreeView\" />
-  </ItemGroup>
 </Project>

@@ -1,10 +1,83 @@
-﻿@typeparam TChildren
-@typeparam TItem where TItem : ITreeItem<TChildren>
+﻿@using Sanchez.DansUI.Components.Component
 
-    @code {
-        [Parameter]
-        public ICollection<TItem> Items { get; set; }
+@typeparam TItem where TItem : ITreeItem<TItem>
 
-        [Parameter]
-        public RenderFragment<TItem> ChildContent { get; set; }
+@implements IDisposable
+
+@if (_children == null)
+{
+    <div class="item">
+        <div>
+            <Icon Type="Icons.IconType.LOADER_2" />
+        </div>
+        <div>@ChildContent(Item)</div>
+    </div>
+}
+else if (_children.Any())
+{
+    <div class="item" @onclick=HandleClick>
+        <div>
+            @if (Item.IsExpanded)
+            {
+            <Icon Type="Icons.IconType.CHEVRON_DOWN" />
+            }
+            else
+            {
+                <Icon Type="Icons.IconType.CHEVRON_RIGHT" />
+            }
+        </div>
+        <div>@ChildContent(Item)</div>
+    </div>
+    <div class="children">
+        @if (Item.IsExpanded)
+        {
+            @foreach (var child in _children)
+            {
+                <TreeView TItem=TItem Item=child ChildContent=ChildContent />
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="item">
+        <div></div>
+        <div>@ChildContent(Item)</div>
+    </div>
+}
+
+@code {
+    IDisposable _listener;
+    ICollection<TItem> _children;
+
+    [Parameter]
+    public TItem Item { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (_listener != null)
+            _listener.Dispose();
+
+        _listener = Item
+            .GetChildren(default)
+            .Subscribe(x =>
+            {
+                _children = x;
+                InvokeAsync(StateHasChanged);
+            });
     }
+
+    void HandleClick()
+    {
+        Item.IsExpanded = !Item.IsExpanded;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _listener.Dispose();
+    }
+}

@@ -1,0 +1,17 @@
+﻿@page "/display/treeview"
+@using Sanchez.DansUI.Runner.Blazor.Models
+
+<h1>Tree View</h1>
+
+<Slimmer>
+    <TreeView TItem=ExampleTreeItem Item=item>
+        <div style="display: flex; gap: 7px">
+            <Icon Type="IconType.ACTIVITY" />
+            <div>@context.Id</div>
+        </div>
+    </TreeView>
+</Slimmer>
+
+@code {
+    ExampleTreeItem item = new();
+}
