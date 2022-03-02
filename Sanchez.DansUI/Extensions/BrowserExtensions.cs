@@ -33,8 +33,15 @@ namespace Sanchez.DansUI.Extensions
 
         public static async ValueTask<TimeSpan> GetBrowserOffset(this IJSRuntime jsRuntime)
         {
-            int hoursOffset = await jsRuntime.InvokeAsync<int>("DansUI.datetime.timeZoneOffset");
-            return TimeSpan.FromHours(hoursOffset);
+            try
+            {
+                int hoursOffset = await jsRuntime.InvokeAsync<int>("DansUI.datetime.timeZoneOffset");
+                return TimeSpan.FromHours(hoursOffset);
+            }
+            catch (Exception ex)
+            {
+                return TimeSpan.Zero;
+            }
         }
     }
 }
