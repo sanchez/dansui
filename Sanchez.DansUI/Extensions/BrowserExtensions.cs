@@ -35,7 +35,7 @@ namespace Sanchez.DansUI.Extensions
         {
             try
             {
-                int hoursOffset = await jsRuntime.InvokeAsync<int>("DansUI.datetime.timeZoneOffset");
+                double hoursOffset = await jsRuntime.InvokeAsync<double>("DansUI.datetime.timeZoneOffset");
                 return TimeSpan.FromHours(hoursOffset);
             }
             catch (Exception ex)
