@@ -25,9 +25,16 @@ namespace Sanchez.DansUI.Commands
 
         public async Task<TResult> ExecuteAsync(TParam param)
         {
-            TResult res = await _execute(param);
-            _subject.OnNext(res);
-            return res;
+            try
+            {
+                TResult res = await _execute(param);
+                _subject.OnNext(res);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                return default;
+            }
         }
 
         public event EventHandler CanExecuteChanged;
